@@ -1,6 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import MfaForm from './MfaForm'
+import UserMessage from './UserMessage'
 
 describe('MfaForm.js Tests', () => {
   it('should require correct params', () => {
@@ -70,7 +71,7 @@ describe('MfaForm.js Tests', () => {
       expect(input.props().value).toEqual('the_code')
     })
 
-    it('should pass errorMsg to <Alert>', () => {
+    it('should pass errorMsg to <UserMessage>', () => {
       let mock = jest.fn()
       const wrapper = shallow(<MfaForm
         maskedEmail="a@test.com"
@@ -79,9 +80,9 @@ describe('MfaForm.js Tests', () => {
         onValidate={mock}
         errorMsg="some_message"/>)
 
-      const UserMessage = wrapper.find('.mfaAlert')
-      expect(UserMessage).toHaveLength(1)
-      expect(UserMessage.props().children).toEqual('some_message')
+      const UserMessageTag = wrapper.find(UserMessage)
+      expect(UserMessageTag).toHaveLength(1)
+      expect(UserMessageTag.props().errorMessage).toEqual('some_message')
     })
 
     it('has type of password', () => {

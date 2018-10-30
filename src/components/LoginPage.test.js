@@ -113,6 +113,7 @@ describe('LoginPage.js Tests', () => {
 
     wrapper.instance().showError('msg')
     expect(wrapper.state()).toEqual({
+      MfaAttemptsRemaining: 3,
       code: '',
       mode: 1,
       maskedEmail: 'somevalue',

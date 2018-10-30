@@ -78,7 +78,7 @@ class LoginPage extends Component {
     document.getElementById('login-form').submit()
   }
 
-  showError (msg, mode = MODE.LOGIN, mfaCount) {
+  showError (msg, mode = MODE.LOGIN, mfaCount = 3) {
     this.setState({
       mode: mode,
       errorMsg: msg,
@@ -214,6 +214,7 @@ class LoginPage extends Component {
           validateUpperCase={this.state.upperCase}
           validateNumber={this.state.number}
           validateSpecialCharacter={this.state.specialCharacter}
+          errorMsg={this.state.errorMsg}
           confirmPassword={this.state.confirmPassword}
           newPassword={this.state.newPassword}
           onNewPasswordChange={this.onInputChange}
