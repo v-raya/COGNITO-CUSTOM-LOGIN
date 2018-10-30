@@ -1,8 +1,9 @@
 module.exports = {
   launch: {
     dumpio: true,
-    headless: 'true',
-    args: ['--no-sandbox']
+    headless: true,
+    devtools: false,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   },
   server: {
     command: 'ENV_PATH=./env/.integration.env npm run open:src',
