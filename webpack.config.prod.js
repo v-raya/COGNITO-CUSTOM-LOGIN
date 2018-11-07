@@ -7,6 +7,8 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import Dotenv from 'dotenv-webpack'
 
+const RE_CSSMODULE = /\.module\.css$/
+
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('production'),
   __DEV__: false
@@ -162,6 +164,7 @@ export default {
       },
       {
         test: /(\.css|\.scss|\.sass)$/,
+        exclude: RE_CSSMODULE,
         use: ExtractTextPlugin.extract({
           use: [
             {
@@ -187,6 +190,28 @@ export default {
             }
           ]
         })
+      },
+      {
+        test: RE_CSSMODULE,
+        use: [
+          require.resolve('style-loader'),
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+              modules: true,
+              sourceMap: true,
+              importLoaders: 1,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          },
+          {
+            loader: require.resolve('postcss-loader'),
+            options: {
+              plugins: () => [ require('autoprefixer') ],
+              sourceMap: true
+            }
+          }
+        ]
       }
     ]
   }
