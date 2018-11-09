@@ -5,6 +5,7 @@ import {validatePassword} from '../utils/validatePassword'
 import ResetPasswordForm from './ResetPasswordForm'
 
 // TODO - redirect_uri on the url?  save it to state
+/* eslint camelcase: 0 */
 class ForgotPasswordPage extends Component {
   constructor (props, context) {
     super(props, context)
@@ -20,7 +21,9 @@ class ForgotPasswordPage extends Component {
       lowerCase: false,
       upperCase: false,
       number: false,
-      specialCharacter: false
+      code: '',
+      specialCharacter: false,
+      disableChangePasswordBtn: true
     }
     this.showResetArea = this.showResetArea.bind(this)
     this.showError = this.showError.bind(this)
@@ -32,6 +35,7 @@ class ForgotPasswordPage extends Component {
     this.changePassword = this.changePassword.bind(this)
     this.mask = this.mask.bind(this)
     this.onCancel = this.onCancel.bind(this)
+    this.disableChangePasswordBtn = this.disableChangePasswordBtn.bind(this)
   }
 
   mask (email) {
@@ -71,22 +75,36 @@ class ForgotPasswordPage extends Component {
   }
 
   updateCodeState (event) {
+    const {new_password, confirm_password} = this.state
     this.setState({
       code: event.target.value
     })
+    this.disableChangePasswordBtn(new_password, confirm_password, event.target.value)
   }
 
   updateNewPasswordState (event) {
+    const {confirm_password, code} = this.state
     this.setState({
       new_password: event.target.value
     })
     validatePassword(this, event.target.value)
+    this.disableChangePasswordBtn(event.target.value, confirm_password, code)
   }
 
   updateConfirmPasswordState (event) {
+    const {new_password, code} = this.state
     this.setState({
       confirm_password: event.target.value
     })
+    this.disableChangePasswordBtn(new_password, event.target.value, code)
+  }
+
+  disableChangePasswordBtn (new_password, confirm_password, code) {
+    if (new_password && confirm_password && code) {
+      this.setState({ disableChangePasswordBtn: false })
+    } else {
+      this.setState({ disableChangePasswordBtn: true })
+    }
   }
 
   showResetArea () {
@@ -135,7 +153,8 @@ class ForgotPasswordPage extends Component {
       default: {
         this.setState({
           new_password: '',
-          confirm_password: ''
+          confirm_password: '',
+          disableChangePasswordBtn: true
         })
         showError('Passwords do not match')
       }
@@ -156,6 +175,7 @@ class ForgotPasswordPage extends Component {
           code={this.state.code}
           newPassword={this.state.new_password}
           confirmPassword={this.state.confirm_password}
+          disableChangePasswordBtn={this.state.disableChangePasswordBtn}
           onCodeChange={this.updateCodeState}
           onNewPasswordChange={this.updateNewPasswordState}
           onConfirmPasswordChange={this.updateConfirmPasswordState}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import UserMessage from './UserMessage'
 import PasswordInstructions from './PasswordInstructions'
 
-const ResetPasswordForm = ({ email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength, code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit }) => {
+const ResetPasswordForm = ({ email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength, code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, disableChangePasswordBtn }) => {
   return (
     <form>
       <h1>Password Reset</h1>
@@ -28,7 +28,7 @@ const ResetPasswordForm = ({ email, errorMsg, validateLowerCase, validateSpecial
       <label id='confirm_password_label'>Confirm New Password Again</label>
       <input id="confirm_password" className="form-control inputField-customizable" type="password" name="confirmPassword" value={confirmPassword} onChange={onConfirmPasswordChange} aria-labelledby='confirm_password_label'/>
 
-      <button id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
+      <button disabled={disableChangePasswordBtn} id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
     </form>
   )
 }
@@ -42,7 +42,8 @@ ResetPasswordForm.propTypes = {
   onCodeChange: PropTypes.func.isRequired,
   onNewPasswordChange: PropTypes.func.isRequired,
   onConfirmPasswordChange: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  disableChangePasswordBtn: PropTypes.bool
 }
 
 export default ResetPasswordForm
