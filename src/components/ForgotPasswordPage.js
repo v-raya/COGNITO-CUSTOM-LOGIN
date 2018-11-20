@@ -46,16 +46,16 @@ class ForgotPasswordPage extends Component {
 
   onEmailSubmit (event) {
     event.preventDefault()
-    let showResetArea = this.showResetArea
-    let showError = this.showError
-    let cognitoUser = Auth.createUser(this.state)
+    const showResetArea = this.showResetArea
+    const showError = this.showError
+    const cognitoUser = Auth.createUser(this.state)
     this.setState({
       cognitoUser: cognitoUser,
       disableResetPassword: true
     })
 
     cognitoUser.forgotPassword({
-      onFailure: function (err) {
+      onFailure: err => {
         if (err.code === 'InvalidParameterException') {
           showError('Email is required')
         } else {
@@ -126,22 +126,23 @@ class ForgotPasswordPage extends Component {
   }
 
   onCancel () {
-    this.props.history.push('/login')
+    const props = this.props
+    props.history.push('/login')
   }
 
   changePassword (event) {
     event.preventDefault()
-    let showError = this.showError
-    let cognitoUser = this.state.cognitoUser
-    let props = this.props
+    const showError = this.showError
+    const cognitoUser = this.state.cognitoUser
+    const props = this.props
     switch (this.state.confirm_password) {
       case this.state.new_password:
         cognitoUser.confirmPassword(this.state.code.trim(), this.state.new_password, {
-          onSuccess: function () {
+          onSuccess: () => {
             props.history.push('/login')
             props.history.push({msg: 'Password has been reset successfully. Please use your new password to login.'})
           },
-          onFailure: function (err) {
+          onFailure: err => {
             if (err.code === 'InvalidParameterException') {
               showError('Password does not conform to policy: Password not long enough')
             } else {

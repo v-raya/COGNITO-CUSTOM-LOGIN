@@ -37,7 +37,9 @@ ForgotPasswordForm.propTypes = {
   email: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  errorMsg: PropTypes.string
+  errorMsg: PropTypes.string,
+  disableResetPassword: PropTypes.bool,
+  onCancel: PropTypes.func
 }
 
 export default ForgotPasswordForm

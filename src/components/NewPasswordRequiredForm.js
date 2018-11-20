@@ -9,16 +9,20 @@ const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCh
       <h1>Update Password</h1>
       <UserMessage errorMessage={errorMsg}/>
       <br/>
-      <label id='first_new_password'>New Password</label>
-      <input id="newPassword" className="form-control inputField-customizable" type="password" name="password" value={newPassword} onChange={onNewPasswordChange} aria-labelledby="first_new_password"/>
+      <label id='first_new_password'>
+        New Password
+        <input id="newPassword" className="form-control inputField-customizable" type="password" name="password" value={newPassword} onChange={onNewPasswordChange} aria-labelledby="first_new_password"/>
+      </label>
       <PasswordInstructions validateLowerCase={validateLowerCase}
         validateUpperCase={validateUpperCase}
         validateNumber={validateNumber}
         validateLength={validateLength}
         validateSpecialCharacter={validateSpecialCharacter}/>
       <br/>
-      <label id='first_confirm_password'>Confirm New Password</label>
-      <input id="confirmPassword" className="form-control inputField-customizable" type="password" name="confirmPassword" value={confirmPassword} onChange={onConfirmPasswordChange} aria-labelledby="first_confirm_password"/>
+      <label id='first_confirm_password'>
+        Confirm New Password
+        <input id="confirmPassword" className="form-control inputField-customizable" type="password" name="confirmPassword" value={confirmPassword} onChange={onConfirmPasswordChange} aria-labelledby="first_confirm_password"/>
+      </label>
       <button id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
     </form>
   )
@@ -30,7 +34,12 @@ NewPasswordRequiredForm.propTypes = {
   confirmPassword: PropTypes.string,
   onNewPasswordChange: PropTypes.func.isRequired,
   onConfirmPasswordChange: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  validateLowerCase: PropTypes.bool,
+  validateSpecialCharacter: PropTypes.bool,
+  validateUpperCase: PropTypes.bool,
+  validateNumber: PropTypes.bool,
+  validateLength: PropTypes.bool
 }
 
 export default NewPasswordRequiredForm

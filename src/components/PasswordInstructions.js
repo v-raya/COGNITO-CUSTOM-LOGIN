@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 export const Cross = () => {
   return <span className="text-danger">&times;</span>
@@ -27,6 +28,14 @@ const PasswordInstructions = props => {
       </div>
     </div>
   )
+}
+
+PasswordInstructions.propTypes = {
+  validateLowerCase: PropTypes.bool,
+  validateSpecialCharacter: PropTypes.bool,
+  validateUpperCase: PropTypes.bool,
+  validateNumber: PropTypes.bool,
+  validateLength: PropTypes.bool
 }
 
 export default PasswordInstructions

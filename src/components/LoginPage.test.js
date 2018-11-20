@@ -1,3 +1,5 @@
+/* eslint "no-magic-numbers": [0, { "enforceConst": true, "ignore": [-1,0,1,2] }] */
+
 import React from 'react'
 import { shallow } from 'enzyme'
 import LoginPage from './LoginPage'
@@ -464,7 +466,7 @@ describe('LoginPage.js Tests', () => {
       const mockAuthenticateUserDefaultAuth = jest.fn()
       const mockSendCustomChallengeAnswer = jest.fn()
       const mockSetAuthenticationFlowType = jest.fn()
-      let cognitoUser = {
+      const cognitoUser = {
         authenticateUserDefaultAuth: mockAuthenticateUserDefaultAuth,
         sendCustomChallengeAnswer: mockSendCustomChallengeAnswer,
         setAuthenticationFlowType: mockSetAuthenticationFlowType,

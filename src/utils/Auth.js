@@ -1,13 +1,13 @@
 import {AuthenticationDetails, CognitoUserPool, CognitoUser} from 'amazon-cognito-identity-js'
 
 export function createUser (state) {
-  let username = state.email.toLowerCase()
-  var poolData = {
+  const username = state.email.toLowerCase()
+  const poolData = {
     UserPoolId: process.env.USER_POOL_ID,
     ClientId: process.env.CLIENT_ID
   }
-  var userPool = new CognitoUserPool(poolData)
-  var userData = {
+  const userPool = new CognitoUserPool(poolData)
+  const userData = {
     Username: username,
     Pool: userPool
   }
@@ -15,7 +15,7 @@ export function createUser (state) {
 }
 
 export function authenticationDetails (state) {
-  var authenticationData = {
+  const authenticationData = {
     Username: state.email.toLowerCase(),
     Password: state.password.trim()
   }

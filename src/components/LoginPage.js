@@ -13,6 +13,7 @@ const MODE = {
   NEW_PASSWORD: 3
 }
 
+const mfaNumber = 3
 class LoginPage extends Component {
   constructor (props, context) {
     super(props, context)
@@ -78,7 +79,7 @@ class LoginPage extends Component {
     document.getElementById('login-form').submit()
   }
 
-  showError (msg, mode = MODE.LOGIN, mfaCount = 3) {
+  showError (msg, mode = MODE.LOGIN, mfaCount = mfaNumber) {
     this.setState({
       mode: mode,
       errorMsg: msg,
@@ -96,21 +97,22 @@ class LoginPage extends Component {
   validate (event) {
     event.preventDefault()
     const cognitoUser = this.state.cognitoUser
-    const challengeResponses = this.state.code.trim() + ' ' + cognitoUser.deviceKey
+    const challengeResponses = `${this.state.code.trim()} ${cognitoUser.deviceKey}`
     const showError = this.showError
     const attemptsRemaining = this.state.MfaAttemptsRemaining
     const setCognitoToken = this.setCognitoToken
+    const magicNum = 3
     this.setState({
       disableVerify: true
     })
     cognitoUser.sendCustomChallengeAnswer(challengeResponses, {
-      onSuccess: function (result) {
+      onSuccess: result => {
         setCognitoToken(JSON.stringify(result))
       },
-      onFailure: function () {
+      onFailure: () => {
         const count = attemptsRemaining - 1
         const errorMessage = customErrorMessage(count)
-        count === 0 ? showError('', MODE.LOGIN, 3) : showError(errorMessage, MODE.VALIDATING, count)
+        count === 0 ? showError('', MODE.LOGIN, magicNum) : showError(errorMessage, MODE.VALIDATING, count)
       }
     })
   }
@@ -119,7 +121,8 @@ class LoginPage extends Component {
     event.preventDefault()
     const showValidationArea = this.showValidationArea
     const showNewPasswordRequiredArea = this.showNewPasswordRequiredArea
-    this.props.history.push({msg: ''})
+    const props = this.props
+    props.history.push({msg: ''})
     const showError = this.showError
     const setCognitoToken = this.setCognitoToken
 
@@ -132,24 +135,24 @@ class LoginPage extends Component {
 
     const authenticationDetails = Auth.authenticationDetails(this.state)
     cognitoUser.authenticateUserDefaultAuth(authenticationDetails, {
-      newPasswordRequired: function (userAttributes, requiredAttributes) {
+      newPasswordRequired: (userAttributes, requiredAttributes) => {
         showNewPasswordRequiredArea()
       },
-      onFailure: function (err) {
+      onFailure: err => {
         const errorMessage = customErrorMessage(err.message)
         showError(errorMessage)
       },
-      customChallenge: function () {
+      customChallenge: () => {
         // device challenge
         const challengeResponses = cognitoUser.deviceKey ? cognitoUser.deviceKey : 'null'
         cognitoUser.sendCustomChallengeAnswer(challengeResponses, {
-          onSuccess: function (result) {
+          onSuccess: result => {
             setCognitoToken(JSON.stringify(result))
           },
-          onFailure: function (err) {
+          onFailure: err => {
             showError(err.message)
           },
-          customChallenge: function (challengeParameters) {
+          customChallenge: challengeParameters => {
             showValidationArea(challengeParameters.maskedEmail)
           }
         })
@@ -165,10 +168,10 @@ class LoginPage extends Component {
     switch (this.state.confirmPassword) {
       case this.state.newPassword:
         cognitoUser.completeNewPasswordChallenge(this.state.newPassword, {}, {
-          onSuccess: function (result) {
+          onSuccess: result => {
             setCognitoToken(JSON.stringify(result))
           },
-          onFailure: function (err) {
+          onFailure: err => {
             showError(err.message, MODE.NEW_PASSWORD)
           }
         })
@@ -194,6 +197,7 @@ class LoginPage extends Component {
 
   render () {
     const perryLoginUrl = `${process.env.PERRY_URL}/perry/login`
+    const props = this.props
     let comp
     switch (this.state.mode) {
       // MFA PAGE
@@ -226,7 +230,7 @@ class LoginPage extends Component {
           onSubmit={event => this.login(event)}
           disableSignIn={this.state.disableSignIn}
           errorMsg={this.state.errorMsg}
-          successMessage={this.props.history.location.msg}
+          successMessage={props.history.location.msg}
           email={this.state.email}
           password={this.state.password}
           onEmailChange={this.onInputChange}

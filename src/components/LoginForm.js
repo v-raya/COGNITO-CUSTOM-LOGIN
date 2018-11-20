@@ -33,7 +33,8 @@ LoginForm.propTypes = {
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired,
   onEmailChange: PropTypes.func.isRequired,
-  onPasswordChange: PropTypes.func.isRequired
+  onPasswordChange: PropTypes.func.isRequired,
+  disableSignIn: PropTypes.bool
 }
 
 export default LoginForm

@@ -22,7 +22,7 @@ describe('ForgotPasswordPage.js Tests', () => {
   })
 
   it('should contain <ResetPasswordForm>', () => {
-    let mock = jest.fn()
+    const mock = jest.fn()
 
     console.error = mock
     const wrapper = shallow(<ForgotPasswordPage />)
@@ -35,7 +35,7 @@ describe('ForgotPasswordPage.js Tests', () => {
   it('masks email correct', () => {
     const wrapper = shallow(<ForgotPasswordPage />)
 
-    let masked = wrapper.instance().mask('abcdef@domain.com')
+    const masked = wrapper.instance().mask('abcdef@domain.com')
     expect(masked).toEqual('a****f@domain.com')
   })
 
@@ -92,7 +92,7 @@ describe('ForgotPasswordPage.js Tests', () => {
   })
 
   it('sets up correctly when showing reset area', () => {
-    let mock = jest.fn()
+    const mock = jest.fn()
 
     // eslint-disable-next-line no-console
     console.error = mock
@@ -111,12 +111,12 @@ describe('ForgotPasswordPage.js Tests', () => {
   })
 
   describe('onEmailSubmit Tests', () => {
-    let mockForgotPassword = jest.fn()
+    const mockForgotPassword = jest.fn()
     let cognitoUser = {
       forgotPassword: mockForgotPassword
     }
 
-    let mockAuthCreateUser = jest.fn()
+    const mockAuthCreateUser = jest.fn()
 
     beforeEach(() => {
       // eslint-disable-next-line
@@ -145,13 +145,13 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('displays email is required if InvalidParameter', () => {
-      let mockShowError = jest.fn()
+      const mockShowError = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
       cognitoUser.forgotPassword = (callback) => {
         callback.onFailure({code: 'InvalidParameterException', message: 'some_message'})
       }
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.showError = mockShowError
       instance.onEmailSubmit(event)
 
@@ -160,13 +160,13 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('displays given errorMessage if not InvalidParameter', () => {
-      let mockShowError = jest.fn()
+      const mockShowError = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
       cognitoUser.forgotPassword = (callback) => {
         callback.onFailure({code: 'something', message: 'some_message'})
       }
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.showError = mockShowError
       instance.onEmailSubmit(event)
 
@@ -175,13 +175,13 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('shows reset area', () => {
-      let mockShowResetArea = jest.fn()
+      const mockShowResetArea = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
       cognitoUser.forgotPassword = (callback) => {
         callback.inputVerificationCode()
       }
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.showResetArea = mockShowResetArea
 
       instance.onEmailSubmit(event)
@@ -191,12 +191,12 @@ describe('ForgotPasswordPage.js Tests', () => {
   })
 
   describe('changePassword Tests', () => {
-    let mockConfirmPassword = jest.fn()
+    const mockConfirmPassword = jest.fn()
     let cognitoUser = {
       confirmPassword: mockConfirmPassword
     }
 
-    let mockAuthCreateUser = jest.fn()
+    const mockAuthCreateUser = jest.fn()
 
     beforeEach(() => {
       // eslint-disable-next-line
@@ -213,11 +213,11 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('shows error when passwords do not match', () => {
-      let mockShowError = jest.fn()
+      const mockShowError = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
 
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.showError = mockShowError
       instance.setState({new_password: 'foobar', confirm_password: 'bazbar'})
       instance.changePassword(event)
@@ -229,7 +229,7 @@ describe('ForgotPasswordPage.js Tests', () => {
     it('calls confirm password when passwords match', () => {
       const wrapper = shallow(<ForgotPasswordPage />)
 
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.setState({new_password: 'foobar', confirm_password: 'foobar', code: 'some_code', cognitoUser: cognitoUser})
       instance.changePassword(event)
 
@@ -239,11 +239,11 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('shows error on confirm password error', () => {
-      let mockShowError = jest.fn()
+      const mockShowError = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
 
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.showError = mockShowError
       cognitoUser.confirmPassword = (code, password, callback) => {
         callback.onFailure({message: 'some_message'})
@@ -257,13 +257,13 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('Shows custom error message, when error code is InvalidParameterException', () => {
-      let mockShowError = jest.fn()
+      const mockShowError = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
 
-      let instance = wrapper.instance()
+      const instance = wrapper.instance()
       instance.showError = mockShowError
-      let err = {code: 'InvalidParameterException'}
+      const err = {code: 'InvalidParameterException'}
       cognitoUser.confirmPassword = (code, password, callback) => {
         callback.onFailure(err)
       }
@@ -276,12 +276,12 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('pushes to login and show success message on success', () => {
-      let mockPush = jest.fn()
+      const mockPush = jest.fn()
 
       const wrapper = shallow(<ForgotPasswordPage />)
 
-      let instance = wrapper.instance()
-      let history = {push: mockPush}
+      const instance = wrapper.instance()
+      const history = {push: mockPush}
       wrapper.setProps({history: history})
       cognitoUser.confirmPassword = (code, password, callback) => {
         callback.onSuccess()

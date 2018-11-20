@@ -52,7 +52,10 @@ MfaForm.propTypes = {
   maskedEmail: PropTypes.string,
   code: PropTypes.string,
   onCodeChange: PropTypes.func.isRequired,
-  onValidate: PropTypes.func.isRequired
+  onValidate: PropTypes.func.isRequired,
+  disableVerify: PropTypes.bool,
+  onCancel: PropTypes.func,
+  errorMsg: PropTypes.string
 }
 
 export default MfaForm
