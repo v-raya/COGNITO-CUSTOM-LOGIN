@@ -34,7 +34,7 @@
     ],
     
     "jsx-a11y/tabindex-no-positive": 1,
-    "no-console": 0,
+    "no-console": [2],
     "no-implicit-coercion": [2],
     "no-invalid-this": [2],
     "no-lonely-if": [2],
@@ -53,6 +53,8 @@
     "prefer-template": [2],
     "radix": [2],
     "react/require-extension": "off",
+    "react/no-did-mount-set-state": [2],
+    "react/no-did-update-set-state": [2],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "semi": [2, "never"]
   },

@@ -1,3 +1,5 @@
+/* eslint no-console: ["error", { allow: ["error"] }] */
+
 import React from 'react'
 import { shallow } from 'enzyme'
 import ForgotPasswordPage from './ForgotPasswordPage'
