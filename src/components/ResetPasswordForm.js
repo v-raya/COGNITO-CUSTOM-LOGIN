@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UserMessage from './UserMessage'
 import PasswordInstructions from './PasswordInstructions'
+import { Circle } from '../utils/FaIcons'
 
-const ResetPasswordForm = ({ email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength, code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, disableChangePasswordBtn }) => {
+const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength, code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, disableChangePasswordBtn, onCancel}) => {
   return (
     <form>
       <h1>Password Reset</h1>
@@ -34,6 +35,7 @@ const ResetPasswordForm = ({ email, errorMsg, validateLowerCase, validateSpecial
         <input id="confirm_password" className="form-control inputField-customizable" type="password" name="confirmPassword" value={confirmPassword} onChange={onConfirmPasswordChange} aria-labelledby='confirm_password_label'/>
       </label>
       <button disabled={disableChangePasswordBtn} id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
+      <button id="cancel_button" className="btn btn-link cancelButton-customizable" type="submit" onClick={onCancel}>{Circle()} Cancel - Return to Login</button>
     </form>
   )
 }
@@ -48,6 +50,7 @@ ResetPasswordForm.propTypes = {
   onNewPasswordChange: PropTypes.func.isRequired,
   onConfirmPasswordChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func,
   disableChangePasswordBtn: PropTypes.bool,
   validateLowerCase: PropTypes.bool,
   validateSpecialCharacter: PropTypes.bool,

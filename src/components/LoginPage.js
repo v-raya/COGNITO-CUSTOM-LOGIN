@@ -223,6 +223,7 @@ class LoginPage extends Component {
           newPassword={this.state.newPassword}
           onNewPasswordChange={this.onInputChange}
           onConfirmPasswordChange={this.onInputChange}
+          onCancel={this.onCancel}
           onSubmit={event => this.changePassword(event)} />
         break
       case MODE.LOGIN:

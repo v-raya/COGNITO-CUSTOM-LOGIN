@@ -180,6 +180,7 @@ class ForgotPasswordPage extends Component {
           onCodeChange={this.updateCodeState}
           onNewPasswordChange={this.updateNewPasswordState}
           onConfirmPasswordChange={this.updateConfirmPasswordState}
+          onCancel={this.onCancel}
           onSubmit={event => this.changePassword(event)}/>)
     } else {
       return (

@@ -196,7 +196,7 @@ describe('ResetPasswordForm.js Tests', () => {
     })
   })
 
-  describe('submit button Tests', () => {
+  describe('Change Password button Tests', () => {
     const mockToVerify = jest.fn()
     const mock = jest.fn()
     const wrapper = shallow(<ResetPasswordForm email="a@test.com" code="the_code" newPassword="new_password" confirmPassword="confirm_password"
@@ -206,23 +206,35 @@ describe('ResetPasswordForm.js Tests', () => {
       mockToVerify.mockReset()
     })
 
-    it('contains submit button', () => {
+    it('has correct text on change password button', () => {
       const button = wrapper.find('button')
-
-      expect(button).toHaveLength(1)
+      expect(button).toHaveLength(2)
+      expect(button.at(0).text()).toEqual('Change Password')
     })
 
-    it('has correct text on submit button', () => {
+    it('calls correct callback onClick for change password', () => {
       const button = wrapper.find('button')
+      expect(button).toHaveLength(2)
+      expect(button.at(0).props().onClick).toEqual(mockToVerify)
+    })
+  })
 
-      expect(button.text()).toEqual('Change Password')
+  describe('Cancel button Tests', () => {
+    const mock = jest.fn()
+    const onCancel = jest.fn()
+    const wrapper = shallow(<ResetPasswordForm email="a@test.com" code="the_code" newPassword="new_password" confirmPassword="confirm_password"
+      onCodeChange={mock} onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock} onCancel={onCancel}/>)
+
+    it('has correct text on cancel button', () => {
+      const button = wrapper.find('button')
+      expect(button).toHaveLength(2)
+      expect(button.at(1).text()).toEqual('<FontAwesomeIcon /> Cancel - Return to Login')
     })
 
-    it('calls correct callback onClick', () => {
+    it('calls correct callback onClick for cancel', () => {
       const button = wrapper.find('button')
-
-      expect(button).toHaveLength(1)
-      expect(button.props().onClick).toEqual(mockToVerify)
+      expect(button).toHaveLength(2)
+      expect(button.at(1).props().onClick).toEqual(onCancel)
     })
   })
 })

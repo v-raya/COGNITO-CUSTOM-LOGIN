@@ -13,12 +13,13 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     shallow(<NewPasswordRequiredForm/>)
 
-    expect(mock).toHaveBeenCalledTimes(3)
+    expect(mock).toHaveBeenCalledTimes(4)
     const concat = [].concat(...mock.mock.calls)
 
     expect(concat.some((element) => { return element.includes('`onNewPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onConfirmPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onSubmit` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`onCancel` is marked as required') })).toBe(true)
   })
 
   it('should display `Password Reset` at top', () => {
@@ -26,9 +27,11 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const wrapper = shallow(<NewPasswordRequiredForm onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
     const h1 = wrapper.find('h1')
+    const label = wrapper.find('label')
 
     expect(h1).toHaveLength(1)
-    expect(h1.text()).toEqual('Update Password')
+    expect(h1.text()).toEqual('Please Update Password')
+    expect(label.at(0).text()).toEqual('You must choose a new password to continue')
   })
 
   it('should pass errorMsg to <UserMessage>', () => {
@@ -112,7 +115,7 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     expect(input.at(1).props().onChange).toEqual(onChange)
   })
 
-  it('contains submit button', () => {
+  it('contains change password button and cancel button', () => {
     const mock = jest.fn()
     const onChange = jest.fn()
     const onSubmit = jest.fn()
@@ -120,10 +123,10 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     const button = wrapper.find('button')
 
-    expect(button).toHaveLength(1)
+    expect(button).toHaveLength(2)
   })
 
-  it('has correct text on submit button', () => {
+  it('has correct text on change password button', () => {
     const mock = jest.fn()
     const onChange = jest.fn()
     const onSubmit = jest.fn()
@@ -131,10 +134,10 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     const button = wrapper.find('button')
 
-    expect(button.text()).toEqual('Change Password')
+    expect(button.at(0).text()).toEqual('Change Password')
   })
 
-  it('calls correct callback onClick', () => {
+  it('calls correct callback onClick for change password', () => {
     const mock = jest.fn()
     const onChange = jest.fn()
     const onSubmit = jest.fn()
@@ -142,7 +145,26 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     const button = wrapper.find('button')
 
-    expect(button).toHaveLength(1)
-    expect(button.props().onClick).toEqual(onSubmit)
+    expect(button.at(0).props().onClick).toEqual(onSubmit)
+  })
+
+  it('has correct text on cancel button', () => {
+    const mock = jest.fn()
+    const onCancel = jest.fn()
+    const wrapper = shallow(<NewPasswordRequiredForm confirmPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock} onCancel={onCancel}/>)
+
+    const button = wrapper.find('button')
+
+    expect(button.at(1).text()).toEqual('<FontAwesomeIcon /> Cancel - Start Over')
+  })
+
+  it('calls correct callback onClick for cancel', () => {
+    const mock = jest.fn()
+    const onCancel = jest.fn()
+    const wrapper = shallow(<NewPasswordRequiredForm confirmPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock} onCancel={onCancel}/>)
+
+    const button = wrapper.find('button')
+
+    expect(button.at(1).props().onClick).toEqual(onCancel)
   })
 })
