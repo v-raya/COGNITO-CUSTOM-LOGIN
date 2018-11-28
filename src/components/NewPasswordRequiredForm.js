@@ -9,7 +9,7 @@ const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCh
     <form>
       <h1>Please Update Password</h1>
       <label htmlFor="label_header_text" className="label-header-text-description">
-        You must choose a new password to continue
+        You must choose a new password to continue.
       </label>
       <UserMessage errorMessage={errorMsg}/>
       <br/>

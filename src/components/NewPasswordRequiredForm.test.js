@@ -31,7 +31,7 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     expect(h1).toHaveLength(1)
     expect(h1.text()).toEqual('Please Update Password')
-    expect(label.at(0).text()).toEqual('You must choose a new password to continue')
+    expect(label.at(0).text()).toEqual('You must choose a new password to continue.')
   })
 
   it('should pass errorMsg to <UserMessage>', () => {
