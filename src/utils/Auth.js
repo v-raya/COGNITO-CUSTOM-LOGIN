@@ -8,15 +8,16 @@ export function createUser (state) {
   }
   const userPool = new CognitoUserPool(poolData)
   const userData = {
-    Username: username,
+    Username: username.trim(),
     Pool: userPool
   }
   return new CognitoUser(userData)
 }
 
 export function authenticationDetails (state) {
+  const username = state.email.toLowerCase()
   const authenticationData = {
-    Username: state.email.toLowerCase(),
+    Username: username.trim(),
     Password: state.password.trim()
   }
 
