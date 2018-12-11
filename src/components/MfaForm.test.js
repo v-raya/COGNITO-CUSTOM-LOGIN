@@ -6,12 +6,13 @@ import MfaForm from './MfaForm'
 import UserMessage from './UserMessage'
 
 describe('MfaForm.js Tests', () => {
+  const countDown = 128
   it('should require correct params', () => {
     const mock = jest.fn()
     // eslint-disable-next-line no-console
     console.error = mock
 
-    shallow(<MfaForm/>)
+    shallow(<MfaForm countDown={countDown}/>)
 
     expect(mock).toHaveBeenCalledTimes(3)
     const concat = [].concat(...mock.mock.calls)
@@ -21,41 +22,41 @@ describe('MfaForm.js Tests', () => {
   })
 
   it('should display `Account Verification` at top', () => {
-    const wrapper = shallow(<MfaForm/>)
+    const wrapper = shallow(<MfaForm countDown={countDown}/>)
 
     const h1 = wrapper.find('h1')
 
     expect(h1).toHaveLength(1)
-    expect(h1.text()).toEqual('Account Verification')
+    expect(h1.text()).toEqual('Account Verification Required')
   })
 
   describe('instructions Tests', () => {
     it('should display instructions', () => {
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com"/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" countDown={countDown}/>)
 
       const span = wrapper.find('p')
 
       expect(span).toHaveLength(3)
-      expect(span.at(0).text()).toEqual('For additional security, we need to verify your account.')
-      expect(span.at(1).text()).toEqual('We have sent a verification code by email to a@test.com')
-      expect(span.at(2).text()).toEqual('Please enter it below to complete verification.')
+      expect(span.at(0).text()).toEqual('For additional security, we need to verify your account on this device.')
+      expect(span.at(1).text()).toEqual('An email was sent to a@test.com with a unique verification code. Please enter that code below.')
+      expect(span.at(2).text()).toEqual('Expires in: 2:8')
     })
   })
 
   describe('code input Tests', () => {
     it('contains label', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock} countDown={countDown}/>)
 
       const label = wrapper.find('label')
 
       expect(label).toHaveLength(1)
-      expect(label.text()).toEqual('Enter Code')
+      expect(label.text()).toEqual('Verification Code')
     })
 
     it('contains text input for code', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock} countDown={countDown}/>)
 
       const input = wrapper.find('PasswordInput')
 
@@ -65,7 +66,7 @@ describe('MfaForm.js Tests', () => {
 
     it('lets component manage code value', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock} countDown={countDown}/>)
 
       const input = wrapper.find('PasswordInput')
 
@@ -80,7 +81,8 @@ describe('MfaForm.js Tests', () => {
         code="the_code"
         onCodeChange={mock}
         onValidate={mock}
-        errorMsg="some_message"/>)
+        errorMsg="some_message"
+        countDown={countDown}/>)
 
       const UserMessageTag = wrapper.find(UserMessage)
       expect(UserMessageTag).toHaveLength(1)
@@ -89,7 +91,7 @@ describe('MfaForm.js Tests', () => {
 
     it('has type of PasswordInput', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock} countDown={countDown}/>)
 
       const input = wrapper.find('PasswordInput')
 
@@ -99,7 +101,7 @@ describe('MfaForm.js Tests', () => {
     it('calls correct callback onChange', () => {
       const mock = jest.fn()
       const onCodeChange = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={onCodeChange} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={onCodeChange} onValidate={mock} countDown={countDown}/>)
 
       const input = wrapper.find('PasswordInput')
 
@@ -111,24 +113,24 @@ describe('MfaForm.js Tests', () => {
   describe('Verify button Tests', () => {
     it('contains verify button', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock} countDown={countDown}/>)
       const button = wrapper.find('.validate-button')
       expect(button).toHaveLength(1)
     })
 
     it('has correct text on submit button', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock} countDown={countDown}/>)
 
       const button = wrapper.find('.validate-button')
 
-      expect(button.text()).toEqual('Verify')
+      expect(button.props().children).toEqual('Verify')
     })
 
     it('calls correct callback onClick', () => {
       const mock = jest.fn()
       const onSubmit = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={onSubmit}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={onSubmit} countDown={countDown}/>)
 
       const button = wrapper.find('.validate-button')
 
@@ -139,7 +141,7 @@ describe('MfaForm.js Tests', () => {
       const mock = jest.fn()
       const onSubmit = jest.fn()
       const disableVerify = false
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={onSubmit} disableVerify={disableVerify}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={onSubmit} disableVerify={disableVerify} countDown={countDown}/>)
       const button = wrapper.find('.validate-button')
       expect(button.props().disabled).toEqual(disableVerify)
     })
@@ -147,33 +149,34 @@ describe('MfaForm.js Tests', () => {
       const mock = jest.fn()
       const onSubmit = jest.fn()
       const disableVerify = true
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={onSubmit} disableVerify={disableVerify}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={onSubmit} disableVerify={disableVerify} countDown={countDown}/>)
       const button = wrapper.find('.validate-button')
-      expect(button.text()).toEqual('Loading....')
+
+      expect(button.props().children).toEqual('Loading....')
     })
   })
 
   describe('Cancel button Tests', () => {
     it('contains cancel button', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onCancel={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onCancel={mock} countDown={countDown}/>)
       const button = wrapper.find('.cancel-button')
       expect(button).toHaveLength(1)
     })
 
     it('has correct text on cancel button', () => {
       const mock = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onCancel={mock}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onCancel={mock} countDown={countDown}/>)
 
       const button = wrapper.find('.cancel-button')
 
-      expect(button.text()).toEqual('Cancel')
+      expect(button.props().children).toEqual('Cancel')
     })
 
     it('calls correct callback onClick', () => {
       const mock = jest.fn()
       const onCancel = jest.fn()
-      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onCancel={onCancel}/>)
+      const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onCancel={onCancel} countDown={countDown}/>)
 
       const button = wrapper.find('.cancel-button')
 

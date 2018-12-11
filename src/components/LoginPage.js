@@ -6,17 +6,20 @@ import LoginForm from './LoginForm'
 import MfaForm from './MfaForm'
 import NewPasswordRequiredForm from './NewPasswordRequiredForm'
 import * as Auth from '../utils/Auth'
+import CodeExpired from './CodeExpired'
 
 const MODE = {
   LOGIN: 1,
   VALIDATING: 2,
-  NEW_PASSWORD: 3
+  NEW_PASSWORD: 3,
+  CODE_EXPIRED: 4
 }
 
 const mfaNumber = 3
 class LoginPage extends Component {
   constructor (props, context) {
     super(props, context)
+    this.timer = 0
 
     this.state = {
       mode: MODE.LOGIN,
@@ -34,7 +37,8 @@ class LoginPage extends Component {
       upperCase: false,
       number: false,
       specialCharacter: false,
-      MfaAttemptsRemaining: 3
+      MfaAttemptsRemaining: 3,
+      countDown: 178
     }
     this.login = this.login.bind(this)
     this.validate = this.validate.bind(this)
@@ -46,6 +50,7 @@ class LoginPage extends Component {
     this.changePassword = this.changePassword.bind(this)
     this.showNewPasswordRequiredArea = this.showNewPasswordRequiredArea.bind(this)
     this.onCancel = this.onCancel.bind(this)
+    this.startTimer = this.startTimer.bind(this)
   }
 
   onInputChange (event) {
@@ -61,6 +66,22 @@ class LoginPage extends Component {
       maskedEmail: maskedEmail,
       errorMsg: ''
     })
+    const intervalTime = 1000
+    this.timer = setInterval(this.startTimer, intervalTime)
+  }
+
+  startTimer () {
+    const duration = this.state.countDown
+    if (duration > 0) {
+      this.setState({
+        countDown: duration - 1
+      })
+    } else {
+      this.setState({
+        mode: MODE.CODE_EXPIRED
+      })
+      clearInterval(this.timer)
+    }
   }
 
   showNewPasswordRequiredArea () {
@@ -108,11 +129,17 @@ class LoginPage extends Component {
     cognitoUser.sendCustomChallengeAnswer(challengeResponses, {
       onSuccess: result => {
         setCognitoToken(JSON.stringify(result))
+        clearInterval(this.timer)
       },
       onFailure: () => {
         const count = attemptsRemaining - 1
         const errorMessage = customErrorMessage(count)
-        count === 0 ? showError('', MODE.LOGIN, magicNum) : showError(errorMessage, MODE.VALIDATING, count)
+        if (count === 0) {
+          showError('', MODE.LOGIN, magicNum)
+          clearInterval(this.timer)
+        } else {
+          showError(errorMessage, MODE.VALIDATING, count)
+        }
       }
     })
   }
@@ -191,8 +218,10 @@ class LoginPage extends Component {
       disableSignIn: false,
       mode: MODE.LOGIN,
       errorMsg: '',
-      MfaAttemptsRemaining: 3
+      MfaAttemptsRemaining: 3,
+      countDown: 178
     })
+    clearInterval(this.timer)
   }
 
   render () {
@@ -209,7 +238,8 @@ class LoginPage extends Component {
           onCodeChange={this.onInputChange}
           onValidate={event => this.validate(event)}
           onCancel={this.onCancel}
-          errorMsg={this.state.errorMsg} />
+          errorMsg={this.state.errorMsg}
+          countDown={this.state.countDown} />
         break
       case MODE.NEW_PASSWORD:
         comp = <NewPasswordRequiredForm
@@ -236,6 +266,11 @@ class LoginPage extends Component {
           password={this.state.password}
           onEmailChange={this.onInputChange}
           onPasswordChange={this.onInputChange} />
+        break
+      case MODE.CODE_EXPIRED:
+        comp = <CodeExpired
+          onReturn={this.onCancel}
+          errorMsg='Your code has now expired.'/>
         break
       default:
         this.showError('Unknown Request')

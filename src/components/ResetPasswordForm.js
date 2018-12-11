@@ -19,12 +19,12 @@ const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialC
       <label id='code_label' htmlFor='forgot_password_code'>
         Code
       </label>
-      <PasswordInput id="forgot_password_code" password={code} onChange={onCodeChange} ariaLabelledBy='code_label'/>
+      <PasswordInput id="forgot_password_code" placeholder='Enter Code Here' password={code} onChange={onCodeChange} ariaLabelledBy='code_label'/>
       <br/>
       <label id='new_password_label' htmlFor='new_password'>
         Create Password
       </label>
-      <PasswordInput id="new_password" password={newPassword} onChange={onNewPasswordChange} ariaLabelledBy='new_password_label'/>
+      <PasswordInput id="new_password" placeholder='Password' password={newPassword} onChange={onNewPasswordChange} ariaLabelledBy='new_password_label'/>
       <PasswordInstructions validateLowerCase={validateLowerCase}
         validateUpperCase={validateUpperCase}
         validateNumber={validateNumber}
@@ -34,7 +34,7 @@ const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialC
       <label id='confirm_password_label' htmlFor='confirm_password'>
         Confirm New Password Again
       </label>
-      <PasswordInput id='confirm_password' password={confirmPassword} onChange={onConfirmPasswordChange} ariaLabelledBy='confirm_password_label'/>
+      <PasswordInput id='confirm_password' placeholder='Password' password={confirmPassword} onChange={onConfirmPasswordChange} ariaLabelledBy='confirm_password_label'/>
 
       <button disabled={disableChangePasswordBtn} id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
       <button id="cancel_button" className="btn btn-link cancelButton-customizable" type="submit" onClick={onCancel}>{Circle()} Cancel - Return to Login</button>

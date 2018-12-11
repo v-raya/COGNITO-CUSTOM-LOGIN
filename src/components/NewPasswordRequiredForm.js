@@ -15,7 +15,7 @@ const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCh
       <UserMessage errorMessage={errorMsg}/>
       <br/>
       <label id='first_new_password' htmlFor='newPassword'> New Password</label>
-      <PasswordInput id='newPassword' password={newPassword} ariaLabeledBy='first_new_password' onChange={onNewPasswordChange}/>
+      <PasswordInput id='newPassword' placeholder='Password' password={newPassword} ariaLabeledBy='first_new_password' onChange={onNewPasswordChange}/>
 
       <PasswordInstructions validateLowerCase={validateLowerCase}
         validateUpperCase={validateUpperCase}
@@ -25,7 +25,7 @@ const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCh
       <br/>
       <label id='first_confirm_password' htmlFor='confirmPassword'>Confirm New Password</label>
         Confirm New Password
-      <PasswordInput id='confirmPassword' password={confirmPassword} onChange={onConfirmPasswordChange}/>
+      <PasswordInput id='confirmPassword' placeholder='Password' password={confirmPassword} onChange={onConfirmPasswordChange}/>
 
       <button id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
       <button id="cancel_button" className="btn btn-link cancelButton-customizable" type="submit" onClick={onCancel}>{Circle()} Cancel - Start Over</button>

@@ -24,7 +24,7 @@ class LoginForm extends React.Component {
           placeholder='Email' value={email} onChange={onEmailChange}/>
         <br/>
         <label className='label-customizable' htmlFor='password'>Password</label>
-        <PasswordInput id='password' password={password} onChange={onPasswordChange}/>
+        <PasswordInput id='password' placeholder='Password' password={password} onChange={onPasswordChange}/>
         <a className='redirect-customizable' href='/forgotPassword'>Forgot your password?</a>
         <button className="btn btn-primary submitButton-customizable" id="submit" type="submit" onClick={onSubmit} disabled={disableSignIn}>
           {disableSignIn ? 'Loading....' : 'Sign In'}

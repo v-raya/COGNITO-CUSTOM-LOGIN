@@ -237,9 +237,32 @@ li {
     padding: 4px;
 }
 
+.countDown {
+    display: flex;
+    justify-content: center;
+    color: #BB3709;
+}
+
+.userMsg1, .userMsg2 {
+    display: flex;
+    justify-content: center;
+    font-size: large;
+}
+
 .cancel-button, .validate-button {
     margin: 4px;
     width: 10rem;
+}
+
+.return-to-login-block {
+    display: flex;
+    justify-content: center;
+    padding-top: 2rem;
+    padding-bottom: 12rem;
+}
+
+.returnToLogin-button {
+    padding: 1rem 6rem 1rem 6rem;
 }
 
 .reset-password-button{

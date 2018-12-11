@@ -20,12 +20,13 @@ describe('PasswordInput.js Tests', () => {
 
   it('contains text input for password', () => {
     const ariaLabel = 'my label'
-    const wrapper = shallow(<PasswordInput id={'password'} ariaLabelledBy={ariaLabel} onChange={mockOnChange} capslock={false}/>)
+    const wrapper = shallow(<PasswordInput id={'password'} ariaLabelledBy={ariaLabel} onChange={mockOnChange} capslock={false} placeholder='some holder' tabIndex='1' />)
     const input = wrapper.find('input')
     expect(input).toHaveLength(1)
 
     expect(input.props().id).toEqual('password')
-    expect(input.props().placeholder).toEqual('Password')
+    expect(input.props().placeholder).toEqual('some holder')
+    expect(input.props().tabIndex).toEqual('1')
     expect(input.props()['aria-labelledby']).toEqual('my label')
   })
 

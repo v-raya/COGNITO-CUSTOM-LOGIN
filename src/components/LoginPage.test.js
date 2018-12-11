@@ -7,12 +7,19 @@ import LoginForm from './LoginForm'
 import MfaForm from './MfaForm'
 import NewPasswordRequiredForm from './NewPasswordRequiredForm'
 import * as Auth from '../utils/Auth'
+import CodeExpired from './CodeExpired'
 
 describe('LoginPage.js Tests', () => {
+  const MODE = {
+    LOGIN: 1,
+    VALIDATING: 2,
+    NEW_PASSWORD: 3,
+    CODE_EXPIRED: 4
+  }
   it('should have mode of login by default', () => {
     const wrapper = shallow(<LoginPage/>)
 
-    expect(wrapper.state().mode).toEqual(1)
+    expect(wrapper.state().mode).toEqual(MODE.LOGIN)
   })
 
   it('should contain <LoginForm> by default', () => {
@@ -22,18 +29,26 @@ describe('LoginPage.js Tests', () => {
     expect(wrapper.find(MfaForm).length).toEqual(0)
   })
 
-  it('should contain <MfaForm>', () => {
+  it('replace login page with MFA page when the mode is VALIDATING', () => {
     const wrapper = shallow(<LoginPage />)
 
-    wrapper.setState({ mode: 2 })
+    wrapper.setState({ mode: MODE.VALIDATING })
     expect(wrapper.find(LoginForm).length).toEqual(0)
     expect(wrapper.find(MfaForm).length).toEqual(1)
   })
 
-  it('should contain <NewPasswordRequiredForm>', () => {
+  it('replace login page with code expired page when the mode is CODE_EXPIRED', () => {
     const wrapper = shallow(<LoginPage />)
 
-    wrapper.setState({ mode: 3 })
+    wrapper.setState({ mode: MODE.CODE_EXPIRED })
+    expect(wrapper.find(LoginForm).length).toEqual(0)
+    expect(wrapper.find(CodeExpired).length).toEqual(1)
+  })
+
+  it('replace login page with New password required form page when the mode is NEW_PASSWORD', () => {
+    const wrapper = shallow(<LoginPage />)
+
+    wrapper.setState({ mode: MODE.NEW_PASSWORD })
     expect(wrapper.find(LoginForm).length).toEqual(0)
     expect(wrapper.find(MfaForm).length).toEqual(0)
     expect(wrapper.find(NewPasswordRequiredForm).length).toEqual(1)
@@ -83,12 +98,35 @@ describe('LoginPage.js Tests', () => {
   })
 
   it('sets up correctly when showing validation area', () => {
+    const countDown = 178
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: 1, maskedEmail: ''})
+    wrapper.setState({mode: MODE.LOGIN, maskedEmail: '', countDown: countDown})
     wrapper.instance().showValidationArea('a@test.com')
-    expect(wrapper.state().mode).toEqual(2)
+    expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
     expect(wrapper.state().errorMsg).toEqual('')
+    const mockStartTimer = wrapper.instance().startTimer
+    expect(wrapper.instance().timer._repeat).toEqual(1000)
+    expect(wrapper.instance().timer._onTimeout).toEqual(mockStartTimer)
+  })
+
+  it('sets up correctly after startTimer is called, when countDown is greater than 0', () => {
+    const countDown = 124
+    const wrapper = shallow(<LoginPage />)
+    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown})
+    wrapper.instance().startTimer()
+    expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
+    expect(wrapper.state().maskedEmail).toEqual('a@test.com')
+    expect(wrapper.state().countDown).toEqual(123)
+  })
+
+  it('sets up correctly after startTimer is called, when countDown = 0', () => {
+    const countDown = 0
+    const wrapper = shallow(<LoginPage />)
+    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown})
+    wrapper.instance().startTimer()
+    expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
+    expect(wrapper.state().maskedEmail).toEqual('a@test.com')
   })
 
   it('sets up correctly when unknown mode', () => {
@@ -104,9 +142,10 @@ describe('LoginPage.js Tests', () => {
   })
 
   it('sets up correctly when showError', () => {
+    const countDown = 178
     const wrapper = shallow(<LoginPage />)
     wrapper.setState({
-      mode: 2,
+      mode: MODE.VALIDATING,
       maskedEmail: 'somevalue',
       errorMsg: '',
       email: 'a@a.com',
@@ -117,7 +156,7 @@ describe('LoginPage.js Tests', () => {
     expect(wrapper.state()).toEqual({
       MfaAttemptsRemaining: 3,
       code: '',
-      mode: 1,
+      mode: MODE.LOGIN,
       maskedEmail: 'somevalue',
       errorMsg: 'msg',
       email: '',
@@ -125,6 +164,7 @@ describe('LoginPage.js Tests', () => {
       cognitoJson: '{}',
       newPassword: '',
       confirmPassword: '',
+      countDown,
       disableSignIn: false,
       disableVerify: false,
       maxLength: false,
@@ -137,9 +177,9 @@ describe('LoginPage.js Tests', () => {
 
   it('sets up correctly when showing update password page', () => {
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: 1, errorMsg: 'some-text'})
+    wrapper.setState({mode: MODE.LOGIN, errorMsg: 'some-text'})
     wrapper.instance().showNewPasswordRequiredArea()
-    expect(wrapper.state().mode).toEqual(3)
+    expect(wrapper.state().mode).toEqual(MODE.NEW_PASSWORD)
     expect(wrapper.state().errorMsg).toEqual('')
   })
 
@@ -192,20 +232,20 @@ describe('LoginPage.js Tests', () => {
       wrapper.instance().showError = mockShowError
       wrapper.instance().validate(event)
       expect(mockShowError.mock.calls.length).toEqual(1)
-      expect(mockShowError.mock.calls[0][0]).toEqual(<span>Error. You entered the wrong verification code, please try again. You have <b>1</b> attempt remaining.</span>)
+      expect(mockShowError.mock.calls[0][0]).toEqual(<span>Error. Incorrect code. You have <b>1</b> attempt remaining.</span>)
     })
 
     describe('verify button', () => {
       it('verify button default state', () => {
         const wrapper = shallow(<LoginPage />)
-        wrapper.setState({ mode: 2, code: '' })
+        wrapper.setState({ mode: MODE.VALIDATING, code: '' })
         expect(wrapper.find(MfaForm).props().disableVerify).toEqual(false)
       })
 
       it('changes verify button state', () => {
         const wrapper = shallow(<LoginPage />)
         const sendCustomChallengeAnswer = jest.fn()
-        wrapper.setState({ mode: 2, code: '' })
+        wrapper.setState({ mode: MODE.VALIDATING, code: '' })
         expect(wrapper.find(MfaForm).props().disableVerify).toEqual(false)
         const cognitoUser = {
           deviceKey: 'device_key',
@@ -342,7 +382,7 @@ describe('LoginPage.js Tests', () => {
       expect(mockShowError.mock.calls[0][0]).toEqual('some_message')
 
       wrapper.instance().showValidationArea('a@test.com')
-      expect(wrapper.state().mode).toEqual(2)
+      expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
       expect(wrapper.state().maskedEmail).toEqual('a@test.com')
       expect(wrapper.state().errorMsg).toEqual('')
     })
@@ -447,7 +487,7 @@ describe('LoginPage.js Tests', () => {
     it('shows error when passwords do not match', () => {
       const mockShowError = jest.fn()
       const wrapper = shallow(<LoginPage />)
-      wrapper.setState({ mode: 3,
+      wrapper.setState({ mode: MODE.NEW_PASSWORD,
         confirmPassword: 'foo',
         newPassword: 'bar' })
 
@@ -522,18 +562,20 @@ describe('LoginPage.js Tests', () => {
   describe('Cancel button', () => {
     it('calls onCancel', () => {
       const wrapper = shallow(<LoginPage />)
-      wrapper.setState({ mode: 2, disableSignIn: true, errorMsg: 'Some-error' })
+      wrapper.setState({ mode: MODE.VALIDATING, disableSignIn: true, errorMsg: 'Some-error' })
 
-      expect(wrapper.state().mode).toEqual(2)
+      expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
       expect(wrapper.find(MfaForm).length).toEqual(1)
       expect(wrapper.state().errorMsg).toEqual('Some-error')
 
       wrapper.instance().onCancel()
 
       wrapper.update()
-      expect(wrapper.state().mode).toEqual(1)
+      expect(wrapper.state().mode).toEqual(MODE.LOGIN)
       expect(wrapper.state().disableSignIn).toEqual(false)
       expect(wrapper.state().errorMsg).toEqual('')
+      expect(wrapper.state().MfaAttemptsRemaining).toEqual(3)
+      expect(wrapper.state().countDown).toEqual(178)
       expect(wrapper.find(LoginForm).length).toEqual(1)
     })
   })
