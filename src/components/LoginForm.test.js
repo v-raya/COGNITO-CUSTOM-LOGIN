@@ -13,14 +13,14 @@ describe('LoginForm.js Tests', () => {
 
     shallow(<LoginForm/>)
 
-    expect(mock).toHaveBeenCalledTimes(5)
+    expect(mock).toHaveBeenCalledTimes(6)
     const concat = [].concat(...mock.mock.calls)
-
     expect(concat.some((element) => { return element.includes('`onSubmit` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`email` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`password` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onEmailChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onPasswordChange` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`onChange` is marked as required') })).toBe(true)
   })
 
   it('should display `Log In` at top', () => {
@@ -88,7 +88,7 @@ describe('LoginForm.js Tests', () => {
     it('contains text input for email', () => {
       const input = wrapper.find('input')
 
-      expect(input).toHaveLength(2)
+      expect(input).toHaveLength(1)
       expect(input.at(0).props().id).toEqual('email')
       expect(input.at(0).props().placeholder).toEqual('Email')
     })
@@ -96,21 +96,21 @@ describe('LoginForm.js Tests', () => {
     it('lets component manage email value', () => {
       const input = wrapper.find('input')
 
-      expect(input).toHaveLength(2)
+      expect(input).toHaveLength(1)
       expect(input.at(0).props().value).toEqual('a@test.com')
     })
 
     it('has type of text', () => {
       const input = wrapper.find('input')
 
-      expect(input).toHaveLength(2)
+      expect(input).toHaveLength(1)
       expect(input.at(0).props().type).toEqual('text')
     })
 
     it('calls correct callback onChange', () => {
       const input = wrapper.find('input')
 
-      expect(input).toHaveLength(2)
+      expect(input).toHaveLength(1)
       expect(input.at(0).props().onChange).toEqual(mockToVerify)
     })
   })
@@ -126,6 +126,11 @@ describe('LoginForm.js Tests', () => {
       onPasswordChange={mockToVerify}
       errorMsg="some_message"/>)
 
+    let passwordInput
+
+    beforeEach(() => {
+      passwordInput = wrapper.find('PasswordInput')
+    })
     afterEach(() => {
       mockToVerify.mockReset()
     })
@@ -137,33 +142,12 @@ describe('LoginForm.js Tests', () => {
       expect(label.at(1).text()).toEqual('Password')
     })
 
-    it('contains text input for password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(2)
-      expect(input.at(1).props().id).toEqual('password')
-      expect(input.at(1).props().placeholder).toEqual('Password')
-    })
-
     it('lets component manage password value', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(2)
-      expect(input.at(1).props().value).toEqual('thepassword')
-    })
-
-    it('has type of password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(2)
-      expect(input.at(1).props().type).toEqual('password')
+      expect(passwordInput.props().password).toEqual('thepassword')
     })
 
     it('calls correct callback onChange', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(2)
-      expect(input.at(1).props().onChange).toEqual(mockToVerify)
+      expect(passwordInput.props().onChange).toEqual(mockToVerify)
     })
   })
 

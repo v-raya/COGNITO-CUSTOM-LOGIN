@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import UserMessage from './UserMessage'
 import PasswordInstructions from './PasswordInstructions'
 import { Circle } from '../utils/FaIcons'
+import PasswordInput from './PasswordInput'
 
 const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength, newPassword, confirmPassword, onNewPasswordChange, onConfirmPasswordChange, onSubmit, onCancel}) => {
   return (
@@ -13,20 +14,19 @@ const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCh
       </label>
       <UserMessage errorMessage={errorMsg}/>
       <br/>
-      <label id='first_new_password'>
-        New Password
-        <input id="newPassword" className="form-control inputField-customizable" type="password" name="password" value={newPassword} onChange={onNewPasswordChange} aria-labelledby="first_new_password"/>
-      </label>
+      <label id='first_new_password' htmlFor='newPassword'> New Password</label>
+      <PasswordInput id='newPassword' password={newPassword} ariaLabeledBy='first_new_password' onChange={onNewPasswordChange}/>
+
       <PasswordInstructions validateLowerCase={validateLowerCase}
         validateUpperCase={validateUpperCase}
         validateNumber={validateNumber}
         validateLength={validateLength}
         validateSpecialCharacter={validateSpecialCharacter}/>
       <br/>
-      <label id='first_confirm_password'>
+      <label id='first_confirm_password' htmlFor='confirmPassword'>Confirm New Password</label>
         Confirm New Password
-        <input id="confirmPassword" className="form-control inputField-customizable" type="password" name="confirmPassword" value={confirmPassword} onChange={onConfirmPasswordChange} aria-labelledby="first_confirm_password"/>
-      </label>
+      <PasswordInput id='confirmPassword' password={confirmPassword} onChange={onConfirmPasswordChange}/>
+
       <button id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
       <button id="cancel_button" className="btn btn-link cancelButton-customizable" type="submit" onClick={onCancel}>{Circle()} Cancel - Start Over</button>
     </form>

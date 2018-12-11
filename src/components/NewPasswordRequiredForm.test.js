@@ -13,13 +13,13 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     shallow(<NewPasswordRequiredForm/>)
 
-    expect(mock).toHaveBeenCalledTimes(4)
+    expect(mock).toHaveBeenCalledTimes(5)
     const concat = [].concat(...mock.mock.calls)
-
     expect(concat.some((element) => { return element.includes('`onNewPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onConfirmPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onSubmit` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onCancel` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`onChange` is marked as required') })).toBe(true)
   })
 
   it('should display `Password Reset` at top', () => {
@@ -47,7 +47,7 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const mock = jest.fn()
     const wrapper = shallow(<NewPasswordRequiredForm newPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('PasswordInput')
 
     expect(input).toHaveLength(2)
     expect(input.at(0).props().id).toEqual('newPassword')
@@ -57,10 +57,10 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const mock = jest.fn()
     const wrapper = shallow(<NewPasswordRequiredForm newPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('PasswordInput')
 
     expect(input).toHaveLength(2)
-    expect(input.at(0).props().value).toEqual('New Password')
+    expect(input.at(0).props().password).toEqual('New Password')
   })
 
   it('calls correct callback onChange for new password', () => {
@@ -68,7 +68,7 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const onChange = jest.fn()
     const wrapper = shallow(<NewPasswordRequiredForm newPassword="New Password" onNewPasswordChange={onChange} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('PasswordInput')
 
     expect(input).toHaveLength(2)
     expect(input.at(0).props().onChange).toEqual(onChange)
@@ -88,7 +88,7 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const mock = jest.fn()
     const wrapper = shallow(<NewPasswordRequiredForm confirmPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('PasswordInput')
 
     expect(input).toHaveLength(2)
     expect(input.at(1).props().id).toEqual('confirmPassword')
@@ -98,10 +98,10 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const mock = jest.fn()
     const wrapper = shallow(<NewPasswordRequiredForm confirmPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('PasswordInput')
 
     expect(input).toHaveLength(2)
-    expect(input.at(1).props().value).toEqual('New Password')
+    expect(input.at(1).props().password).toEqual('New Password')
   })
 
   it('calls correct callback onChange for confirmPassword', () => {
@@ -109,7 +109,7 @@ describe('NewPasswordRequiredForm.js Tests', () => {
     const onChange = jest.fn()
     const wrapper = shallow(<NewPasswordRequiredForm confirmPassword="New Password" onNewPasswordChange={mock} onConfirmPasswordChange={onChange} onSubmit={mock}/>)
 
-    const input = wrapper.find('input')
+    const input = wrapper.find('PasswordInput')
 
     expect(input).toHaveLength(2)
     expect(input.at(1).props().onChange).toEqual(onChange)

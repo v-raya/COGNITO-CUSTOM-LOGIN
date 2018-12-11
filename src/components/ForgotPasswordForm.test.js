@@ -133,4 +133,15 @@ describe('ForgotPasswordForm.js Tests', () => {
 
     expect(button.at(0).props().onClick).toEqual(onCancel)
   })
+
+  it('shows Loading state', () => {
+    const onChange = jest.fn()
+    const onSubmit = jest.fn()
+    const onCancel = jest.fn()
+    const wrapper = shallow(<ForgotPasswordForm disableResetPassword={true} email="a@test.com" onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}/>)
+
+    const button = wrapper.find('button')
+
+    expect(button.at(1).props().children).toEqual('Loading....')
+  })
 })

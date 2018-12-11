@@ -4,6 +4,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import ResetPasswordForm from './ResetPasswordForm'
 import UserMessage from './UserMessage'
+import PasswordInput from './PasswordInput'
 
 describe('ResetPasswordForm.js Tests', () => {
   it('should require correct params', () => {
@@ -14,7 +15,7 @@ describe('ResetPasswordForm.js Tests', () => {
 
     shallow(<ResetPasswordForm/>)
 
-    expect(mock).toHaveBeenCalledTimes(8)
+    expect(mock).toHaveBeenCalledTimes(9)
     const concat = [].concat(...mock.mock.calls)
 
     expect(concat.some((element) => { return element.includes('`email` is marked as required') })).toBe(true)
@@ -25,6 +26,7 @@ describe('ResetPasswordForm.js Tests', () => {
     expect(concat.some((element) => { return element.includes('`onNewPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onConfirmPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onSubmit` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`onChange` is marked as required in `PasswordInput`') })).toBe(true)
   })
 
   it('should display `Password Reset` at top', () => {
@@ -64,6 +66,11 @@ describe('ResetPasswordForm.js Tests', () => {
     const wrapper = shallow(<ResetPasswordForm email="a@test.com" code="the_code" newPassword="" confirmPassword=""
       onCodeChange={mockToVerify} onNewPasswordChange={mock} onConfirmPasswordChange={mock} onSubmit={mock}/>)
 
+    let input
+    beforeEach(() => {
+      input = wrapper.find('PasswordInput')
+      expect(input).toHaveLength(3)
+    })
     afterEach(() => {
       mockToVerify.mockReset()
     })
@@ -76,30 +83,14 @@ describe('ResetPasswordForm.js Tests', () => {
     })
 
     it('contains text input for code', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
       expect(input.at(0).props().id).toEqual('forgot_password_code')
     })
 
     it('lets component manage code value', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
-      expect(input.at(0).props().value).toEqual('the_code')
-    })
-
-    it('has type of password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
-      expect(input.at(0).props().type).toEqual('password')
+      expect(input.at(0).props().password).toEqual('the_code')
     })
 
     it('calls correct callback onChange', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
       expect(input.at(0).props().onChange).toEqual(mockToVerify)
     })
   })
@@ -109,7 +100,12 @@ describe('ResetPasswordForm.js Tests', () => {
     const mock = jest.fn()
     const wrapper = shallow(<ResetPasswordForm email="a@test.com" code="the_code" newPassword="new_password" confirmPassword=""
       onCodeChange={mock} onNewPasswordChange={mockToVerify} onConfirmPasswordChange={mock} onSubmit={mock}/>)
+    let input
 
+    beforeEach(() => {
+      input = wrapper.find('PasswordInput')
+      expect(input).toHaveLength(3)
+    })
     afterEach(() => {
       mockToVerify.mockReset()
     })
@@ -117,35 +113,18 @@ describe('ResetPasswordForm.js Tests', () => {
     it('contains label', () => {
       const label = wrapper.find('label')
 
-      expect(label).toHaveLength(3)
       expect(label.at(1).text()).toEqual('Create Password')
     })
 
     it('contains text input for new password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
       expect(input.at(1).props().id).toEqual('new_password')
     })
 
     it('lets component manage new password value', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
-      expect(input.at(1).props().value).toEqual('new_password')
-    })
-
-    it('has type of password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
-      expect(input.at(1).props().type).toEqual('password')
+      expect(input.at(1).props().password).toEqual('new_password')
     })
 
     it('calls correct callback onChange', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
       expect(input.at(1).props().onChange).toEqual(mockToVerify)
     })
   })
@@ -155,7 +134,12 @@ describe('ResetPasswordForm.js Tests', () => {
     const mock = jest.fn()
     const wrapper = shallow(<ResetPasswordForm email="a@test.com" code="the_code" newPassword="new_password" confirmPassword="confirm_password"
       onCodeChange={mock} onNewPasswordChange={mock} onConfirmPasswordChange={mockToVerify} onSubmit={mock}/>)
+    let input
 
+    beforeEach(() => {
+      input = wrapper.find('PasswordInput')
+      expect(input).toHaveLength(3)
+    })
     afterEach(() => {
       mockToVerify.mockReset()
     })
@@ -168,30 +152,14 @@ describe('ResetPasswordForm.js Tests', () => {
     })
 
     it('contains text input for confirm password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
       expect(input.at(2).props().id).toEqual('confirm_password')
     })
 
     it('lets component manage confirm password value', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
-      expect(input.at(2).props().value).toEqual('confirm_password')
-    })
-
-    it('has type of password', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
-      expect(input.at(2).props().type).toEqual('password')
+      expect(input.at(2).props().password).toEqual('confirm_password')
     })
 
     it('calls correct callback onChange', () => {
-      const input = wrapper.find('input')
-
-      expect(input).toHaveLength(3)
       expect(input.at(2).props().onChange).toEqual(mockToVerify)
     })
   })
