@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import UserMessage from './UserMessage'
+import PasswordInput from './PasswordInput'
 
 const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, onCancel, errorMsg}) => {
   return (
@@ -17,15 +18,8 @@ const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, on
       </div>
       <br/>
       <label htmlFor='code'>Enter Code</label>
-      <input
-        id="code"
-        className="form-control inputField-customizable"
-        type="password"
-        name="code"
-        value={code}
-        onChange={onCodeChange}
-        autoFocus
-        tabIndex="1"/>
+      <PasswordInput id="code" password={code} onChange={onCodeChange} />
+
       <div className= 'submit-block'>
         <button
           type="button"

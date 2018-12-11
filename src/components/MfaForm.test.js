@@ -13,11 +13,11 @@ describe('MfaForm.js Tests', () => {
 
     shallow(<MfaForm/>)
 
-    expect(mock).toHaveBeenCalledTimes(2)
+    expect(mock).toHaveBeenCalledTimes(3)
     const concat = [].concat(...mock.mock.calls)
-
     expect(concat.some((element) => { return element.includes('`onCodeChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onValidate` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`onChange` is marked as required') })).toBe(true)
   })
 
   it('should display `Account Verification` at top', () => {
@@ -57,7 +57,7 @@ describe('MfaForm.js Tests', () => {
       const mock = jest.fn()
       const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
 
-      const input = wrapper.find('input')
+      const input = wrapper.find('PasswordInput')
 
       expect(input).toHaveLength(1)
       expect(input.props().id).toEqual('code')
@@ -67,10 +67,10 @@ describe('MfaForm.js Tests', () => {
       const mock = jest.fn()
       const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
 
-      const input = wrapper.find('input')
+      const input = wrapper.find('PasswordInput')
 
       expect(input).toHaveLength(1)
-      expect(input.props().value).toEqual('the_code')
+      expect(input.props().password).toEqual('the_code')
     })
 
     it('should pass errorMsg to <UserMessage>', () => {
@@ -87,14 +87,13 @@ describe('MfaForm.js Tests', () => {
       expect(UserMessageTag.props().errorMessage).toEqual('some_message')
     })
 
-    it('has type of password', () => {
+    it('has type of PasswordInput', () => {
       const mock = jest.fn()
       const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={mock} onValidate={mock}/>)
 
-      const input = wrapper.find('input')
+      const input = wrapper.find('PasswordInput')
 
       expect(input).toHaveLength(1)
-      expect(input.props().type).toEqual('password')
     })
 
     it('calls correct callback onChange', () => {
@@ -102,7 +101,7 @@ describe('MfaForm.js Tests', () => {
       const onCodeChange = jest.fn()
       const wrapper = shallow(<MfaForm maskedEmail="a@test.com" code="the_code" onCodeChange={onCodeChange} onValidate={mock}/>)
 
-      const input = wrapper.find('input')
+      const input = wrapper.find('PasswordInput')
 
       expect(input).toHaveLength(1)
       expect(input.props().onChange).toEqual(onCodeChange)
