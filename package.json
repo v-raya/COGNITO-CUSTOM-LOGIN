@@ -88,7 +88,7 @@
     "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
     "jest-cli": "23.6.0",
-    "jest-puppeteer": "3.4.0",
+    "jest-puppeteer": "3.7.0",
     "jsdom": "12.2.0",
     "jsdom-global": "3.0.2",
     "json-loader": "0.5.4",
