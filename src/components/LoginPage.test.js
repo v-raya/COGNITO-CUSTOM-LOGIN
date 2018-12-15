@@ -113,7 +113,7 @@ describe('LoginPage.js Tests', () => {
   it('sets up correctly after startTimer is called, when countDown is greater than 0', () => {
     const countDown = 124
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown})
+    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown, code: 'LETMEIN'})
     wrapper.instance().startTimer()
     expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
@@ -126,6 +126,7 @@ describe('LoginPage.js Tests', () => {
     wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown})
     wrapper.instance().startTimer()
     expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
+    expect(wrapper.state().code).toEqual('')
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
   })
 

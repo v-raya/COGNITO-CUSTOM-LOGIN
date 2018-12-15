@@ -78,7 +78,8 @@ class LoginPage extends Component {
       })
     } else {
       this.setState({
-        mode: MODE.CODE_EXPIRED
+        mode: MODE.CODE_EXPIRED,
+        code: ''
       })
       clearInterval(this.timer)
     }
