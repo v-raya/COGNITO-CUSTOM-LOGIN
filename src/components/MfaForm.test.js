@@ -39,7 +39,7 @@ describe('MfaForm.js Tests', () => {
       expect(span).toHaveLength(3)
       expect(span.at(0).text()).toEqual('For additional security, we need to verify your account on this device.')
       expect(span.at(1).text()).toEqual('An email was sent to a@test.com with a unique verification code. Please enter that code below.')
-      expect(span.at(2).text()).toEqual('Expires in: 2:8')
+      expect(span.at(2).text()).toEqual('Expires in: 2:08')
     })
   })
 

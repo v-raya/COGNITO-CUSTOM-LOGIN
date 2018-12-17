@@ -3,11 +3,9 @@ import PropTypes from 'prop-types'
 import UserMessage from './UserMessage'
 import PasswordInput from './PasswordInput'
 import { Button } from '@cwds/components'
+import {secondstoTime} from './../utils/CommonHelper'
 
 const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, onCancel, errorMsg, countDown}) => {
-  const secondsPerMinute = 60
-  const min = Math.floor(countDown / secondsPerMinute)
-  const sec = countDown % secondsPerMinute
   return (
     <form>
       <div id="div-forgot-password-msg">
@@ -18,7 +16,7 @@ const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, on
         <br/>
         <p>An email was sent to {maskedEmail} with a unique verification code. Please enter that code below.</p>
         <br/>
-        <p className='countDown'><b>Expires in: {min}:{sec}</b></p>
+        <p className='countDown'><b>Expires in: {secondstoTime(countDown)}</b></p>
       </div>
       <br/>
       <label htmlFor='code'>Verification Code</label>
