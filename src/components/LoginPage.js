@@ -79,7 +79,8 @@ class LoginPage extends Component {
     } else {
       this.setState({
         mode: MODE.CODE_EXPIRED,
-        code: ''
+        code: '',
+        password: ''
       })
       clearInterval(this.timer)
     }
@@ -105,7 +106,6 @@ class LoginPage extends Component {
     this.setState({
       mode: mode,
       errorMsg: msg,
-      email: '',
       password: '',
       newPassword: '',
       confirmPassword: '',
@@ -220,7 +220,8 @@ class LoginPage extends Component {
       mode: MODE.LOGIN,
       errorMsg: '',
       MfaAttemptsRemaining: 3,
-      countDown: 178
+      countDown: 178,
+      password: ''
     })
     clearInterval(this.timer)
   }

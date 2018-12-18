@@ -123,10 +123,12 @@ describe('LoginPage.js Tests', () => {
   it('sets up correctly after startTimer is called, when countDown = 0', () => {
     const countDown = 0
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown})
+    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown, email: 'a@test.com', password: 'something'})
     wrapper.instance().startTimer()
     expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
     expect(wrapper.state().code).toEqual('')
+    expect(wrapper.state().email).toEqual('a@test.com')
+    expect(wrapper.state().password).toEqual('')
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
   })
 
@@ -160,7 +162,7 @@ describe('LoginPage.js Tests', () => {
       mode: MODE.LOGIN,
       maskedEmail: 'somevalue',
       errorMsg: 'msg',
-      email: '',
+      email: 'a@a.com',
       password: '',
       cognitoJson: '{}',
       newPassword: '',
