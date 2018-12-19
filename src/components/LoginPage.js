@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {customErrorMessage} from '../utils/CommonHelper'
-import {validatePassword} from '../utils/validatePassword'
+import { customErrorMessage } from '../utils/CommonHelper'
+import { validatePassword } from '../utils/validatePassword'
 import qs from 'query-string'
 import LoginForm from './LoginForm'
 import MfaForm from './MfaForm'
@@ -13,6 +13,18 @@ const MODE = {
   VALIDATING: 2,
   NEW_PASSWORD: 3,
   CODE_EXPIRED: 4
+}
+
+const mfaMessages = {
+  errorMsg: 'Your Code has expired.',
+  userMsg1: 'Please return to the login screen and re-enter your login information.',
+  userMsg2: 'A new code will be sent to your email.'
+}
+
+const updatePasswordMessages = {
+  errorMsg: 'Your session has expired.',
+  userMsg1: 'Please return to the login screen to start the Password Update process.',
+  userMsg2: ''
 }
 
 const mfaNumber = 3
@@ -38,7 +50,9 @@ class LoginPage extends Component {
       number: false,
       specialCharacter: false,
       MfaAttemptsRemaining: 3,
-      countDown: 178
+      countDown: 178,
+      userMsg1: '',
+      userMsg2: ''
     }
     this.login = this.login.bind(this)
     this.validate = this.validate.bind(this)
@@ -71,17 +85,19 @@ class LoginPage extends Component {
   }
 
   startTimer () {
+    const mfaCount = 3
     const duration = this.state.countDown
+    const showError = this.showError
     if (duration > 0) {
       this.setState({
         countDown: duration - 1
       })
     } else {
-      this.setState({
-        mode: MODE.CODE_EXPIRED,
-        code: '',
-        password: ''
-      })
+      if (this.state.mode === 2) {
+        showError(mfaMessages.errorMsg, MODE.CODE_EXPIRED, mfaCount, mfaMessages)
+      } else {
+        showError(updatePasswordMessages.errorMsg, MODE.CODE_EXPIRED, mfaCount, updatePasswordMessages)
+      }
       clearInterval(this.timer)
     }
   }
@@ -91,10 +107,13 @@ class LoginPage extends Component {
       mode: MODE.NEW_PASSWORD,
       errorMsg: ''
     })
+    const intervalTime = 1000
+
+    this.timer = setInterval(this.startTimer, intervalTime)
   }
 
   setCognitoToken (token) {
-    this.setState({cognitoJson: token})
+    this.setState({ cognitoJson: token })
     this.submitFormToPerry()
   }
 
@@ -102,7 +121,7 @@ class LoginPage extends Component {
     document.getElementById('login-form').submit()
   }
 
-  showError (msg, mode = MODE.LOGIN, mfaCount = mfaNumber) {
+  showError (msg, mode = MODE.LOGIN, mfaCount = mfaNumber, cardMessages = {}) {
     this.setState({
       mode: mode,
       errorMsg: msg,
@@ -112,7 +131,9 @@ class LoginPage extends Component {
       code: '',
       disableSignIn: false,
       disableVerify: false,
-      MfaAttemptsRemaining: mfaCount
+      MfaAttemptsRemaining: mfaCount,
+      userMsg1: cardMessages.userMsg1,
+      userMsg2: cardMessages.userMsg2
     })
   }
 
@@ -150,7 +171,7 @@ class LoginPage extends Component {
     const showValidationArea = this.showValidationArea
     const showNewPasswordRequiredArea = this.showNewPasswordRequiredArea
     const props = this.props
-    props.history.push({msg: ''})
+    props.history.push({ msg: '' })
     const showError = this.showError
     const setCognitoToken = this.setCognitoToken
 
@@ -256,6 +277,7 @@ class LoginPage extends Component {
           onNewPasswordChange={this.onInputChange}
           onConfirmPasswordChange={this.onInputChange}
           onCancel={this.onCancel}
+          sessionTime={this.state.countDown}
           onSubmit={event => this.changePassword(event)} />
         break
       case MODE.LOGIN:
@@ -272,7 +294,9 @@ class LoginPage extends Component {
       case MODE.CODE_EXPIRED:
         comp = <CodeExpired
           onReturn={this.onCancel}
-          errorMsg='Your code has now expired.'/>
+          userMsg1={this.state.userMsg1}
+          userMsg2={this.state.userMsg2}
+          errorMsg={this.state.errorMsg} />
         break
       default:
         this.showError('Unknown Request')
@@ -294,7 +318,7 @@ class LoginPage extends Component {
 
 LoginPage.defaultProps = {
   history: {
-    location: {msg: ''}
+    location: { msg: '' }
   }
 }
 

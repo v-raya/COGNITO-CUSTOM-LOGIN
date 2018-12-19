@@ -17,13 +17,13 @@ describe('LoginPage.js Tests', () => {
     CODE_EXPIRED: 4
   }
   it('should have mode of login by default', () => {
-    const wrapper = shallow(<LoginPage/>)
+    const wrapper = shallow(<LoginPage />)
 
     expect(wrapper.state().mode).toEqual(MODE.LOGIN)
   })
 
   it('should contain <LoginForm> by default', () => {
-    const wrapper = shallow(<LoginPage/>)
+    const wrapper = shallow(<LoginPage />)
 
     expect(wrapper.find(LoginForm).length).toEqual(1)
     expect(wrapper.find(MfaForm).length).toEqual(0)
@@ -55,7 +55,7 @@ describe('LoginPage.js Tests', () => {
   })
 
   it('should contain form', () => {
-    const wrapper = shallow(<LoginPage/>)
+    const wrapper = shallow(<LoginPage />)
 
     expect(wrapper.find('#login-form').length).toEqual(1)
   })
@@ -100,7 +100,7 @@ describe('LoginPage.js Tests', () => {
   it('sets up correctly when showing validation area', () => {
     const countDown = 178
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: MODE.LOGIN, maskedEmail: '', countDown: countDown})
+    wrapper.setState({ mode: MODE.LOGIN, maskedEmail: '', countDown: countDown })
     wrapper.instance().showValidationArea('a@test.com')
     expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
@@ -113,23 +113,65 @@ describe('LoginPage.js Tests', () => {
   it('sets up correctly after startTimer is called, when countDown is greater than 0', () => {
     const countDown = 124
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown, code: 'LETMEIN'})
+    wrapper.setState({ mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown, code: 'LETMEIN' })
     wrapper.instance().startTimer()
     expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
     expect(wrapper.state().countDown).toEqual(123)
   })
 
-  it('sets up correctly after startTimer is called, when countDown = 0', () => {
+  it('sets up correctly after startTimer is called & Code Timeout, when countDown = 0', () => {
     const countDown = 0
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown, email: 'a@test.com', password: 'something'})
+    wrapper.setState({ mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown })
+    wrapper.instance().startTimer()
+    expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
+    expect(wrapper.state().maskedEmail).toEqual('a@test.com')
+    expect(wrapper.state().userMsg1).toEqual('Please return to the login screen and re-enter your login information.')
+    expect(wrapper.state().userMsg2).toEqual('A new code will be sent to your email.')
+  })
+
+  it('sets up correctly after startTimer is called & session Timeout, when countDown = 0', () => {
+    const countDown = 0
+    const wrapper = shallow(<LoginPage />)
+    wrapper.setState({ mode: MODE.NEW_PASSWORD, maskedEmail: 'a@test.com', countDown: countDown, email: 'a@test.com', password: 'something' })
     wrapper.instance().startTimer()
     expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
     expect(wrapper.state().code).toEqual('')
     expect(wrapper.state().email).toEqual('a@test.com')
     expect(wrapper.state().password).toEqual('')
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
+    expect(wrapper.state().userMsg1).toEqual('Please return to the login screen to start the Password Update process.')
+    expect(wrapper.state().userMsg2).toEqual('')
+  })
+  it('#showError() is called with code expired messages', () => {
+    const errorMsg = 'Your code has expired'
+    const cardMessages = {
+      errorMsg: 'Your Code has expired.',
+      userMsg1: 'Please return to the login screen and re-enter your login information.',
+      userMsg2: 'A new code will be sent to your email.'
+    }
+    const wrapper = shallow(<LoginPage />)
+    wrapper.instance().showError(errorMsg, MODE.CODE_EXPIRED, 3, cardMessages)
+    expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
+    expect(wrapper.state().errorMsg).toEqual(errorMsg)
+    expect(wrapper.state().userMsg1).toEqual(cardMessages.userMsg1)
+    expect(wrapper.state().userMsg2).toEqual(cardMessages.userMsg2)
+  })
+
+  it('#showError() is called with session expired messages', () => {
+    const errorMsg = 'Your session has expired'
+    const cardMessages = {
+      userMsg1: 'Please return to the login screen to start the Password Update process.',
+      userMsg2: ''
+    }
+    const wrapper = shallow(<LoginPage />)
+    wrapper.instance().setState({ mode: MODE.NEW_PASSWORD })
+    wrapper.instance().showError(errorMsg, MODE.CODE_EXPIRED, 3, cardMessages)
+    expect(wrapper.state().mode).toEqual(MODE.CODE_EXPIRED)
+    expect(wrapper.state().errorMsg).toEqual(errorMsg)
+    expect(wrapper.state().userMsg1).toEqual(cardMessages.userMsg1)
+    expect(wrapper.state().userMsg2).toEqual(cardMessages.userMsg2)
   })
 
   it('sets up correctly when unknown mode', () => {
@@ -138,7 +180,7 @@ describe('LoginPage.js Tests', () => {
     const wrapper = shallow(<LoginPage />)
 
     wrapper.instance().showError = mockShowError
-    wrapper.setState({mode: -1})
+    wrapper.setState({ mode: -1 })
 
     expect(mockShowError.mock.calls.length).toEqual(1)
     expect(mockShowError.mock.calls[0][0]).toEqual('Unknown Request')
@@ -154,8 +196,11 @@ describe('LoginPage.js Tests', () => {
       email: 'a@a.com',
       password: 'password'
     })
-
-    wrapper.instance().showError('msg')
+    const cardMessages = {
+      userMsg1: '',
+      userMsg2: ''
+    }
+    wrapper.instance().showError('msg', MODE.LOGIN, 3, cardMessages)
     expect(wrapper.state()).toEqual({
       MfaAttemptsRemaining: 3,
       code: '',
@@ -174,26 +219,28 @@ describe('LoginPage.js Tests', () => {
       lowerCase: false,
       upperCase: false,
       number: false,
-      specialCharacter: false
+      specialCharacter: false,
+      userMsg1: '',
+      userMsg2: ''
     })
   })
 
   it('sets up correctly when showing update password page', () => {
     const wrapper = shallow(<LoginPage />)
-    wrapper.setState({mode: MODE.LOGIN, errorMsg: 'some-text'})
+    wrapper.setState({ mode: MODE.LOGIN, errorMsg: 'some-text' })
     wrapper.instance().showNewPasswordRequiredArea()
     expect(wrapper.state().mode).toEqual(MODE.NEW_PASSWORD)
     expect(wrapper.state().errorMsg).toEqual('')
   })
 
   it('MfaAttemptsRemaining should have 3 as initial value', () => {
-    const wrapper = shallow(<LoginPage/>)
+    const wrapper = shallow(<LoginPage />)
 
     expect(wrapper.state().MfaAttemptsRemaining).toEqual(3)
   })
 
   describe('validate Tests', () => {
-    const event = { preventDefault: () => {} }
+    const event = { preventDefault: () => { } }
     it('calls cognitoUser.sendCustomChallengeAnswer with correct value', () => {
       const sendCustomChallengeAnswer = jest.fn()
       const cognitoUser = {
@@ -272,7 +319,7 @@ describe('LoginPage.js Tests', () => {
     const mockSendCustomChallengeAnswer = jest.fn()
     const mockSetAuthenticationFlowType = jest.fn()
     const mockPush = jest.fn()
-    const event = { preventDefault: () => {} }
+    const event = { preventDefault: () => { } }
     let cognitoUser = {
       authenticateUserDefaultAuth: mockAuthenticateUserDefaultAuth,
       sendCustomChallengeAnswer: mockSendCustomChallengeAnswer,
@@ -293,7 +340,7 @@ describe('LoginPage.js Tests', () => {
         deviceKey: 'device_key'
       }
       mockAuthCreateUser.mockReturnValue(cognitoUser)
-      history = {push: mockPush, location: {msg: ''}}
+      history = { push: mockPush, location: { msg: '' } }
     })
 
     afterEach(() => {
@@ -304,14 +351,14 @@ describe('LoginPage.js Tests', () => {
     })
 
     it('sets cognitoUser to state', () => {
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
 
       wrapper.instance().login(event)
       expect(wrapper.state().cognitoUser).toEqual(cognitoUser)
     })
 
     it('sets authenticationFlowType to CUSTOM_AUTH', () => {
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
       wrapper.instance().login(event)
 
       expect(mockSetAuthenticationFlowType.mock.calls.length).toEqual(1)
@@ -319,7 +366,7 @@ describe('LoginPage.js Tests', () => {
     })
 
     it('calls cognitoUser.authenticateUserDefaultAuth', () => {
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
       wrapper.instance().login(event)
 
       expect(mockAuthenticateUserDefaultAuth.mock.calls.length).toEqual(1)
@@ -328,9 +375,9 @@ describe('LoginPage.js Tests', () => {
     it('displays custom message(email is required) when both email/password are empty', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
       cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
-        callback.onFailure({code: 'InvalidParameterException', message: 'Missing required parameter USERNAME'})
+        callback.onFailure({ code: 'InvalidParameterException', message: 'Missing required parameter USERNAME' })
       }
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -343,9 +390,9 @@ describe('LoginPage.js Tests', () => {
     it('displays custom error message when user is expired', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
       cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
-        callback.onFailure({code: 'NotAuthorizedException', message: 'User account has expired, it must be reset by an administrator.'})
+        callback.onFailure({ code: 'NotAuthorizedException', message: 'User account has expired, it must be reset by an administrator.' })
       }
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -358,9 +405,9 @@ describe('LoginPage.js Tests', () => {
     it('displays default error message', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
       cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
-        callback.onFailure({code: 'something', message: 'some_message'})
+        callback.onFailure({ code: 'something', message: 'some_message' })
       }
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -373,9 +420,9 @@ describe('LoginPage.js Tests', () => {
     it('changes errorMsg state to empty string after successful signIn', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<LoginPage history={history}/>)
+      const wrapper = shallow(<LoginPage history={history} />)
       cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
-        callback.onFailure({code: 'something', message: 'some_message'})
+        callback.onFailure({ code: 'something', message: 'some_message' })
       }
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -394,12 +441,12 @@ describe('LoginPage.js Tests', () => {
       it('calls showError on Error', () => {
         const mockShowError = jest.fn()
 
-        const wrapper = shallow(<LoginPage history={history}/>)
+        const wrapper = shallow(<LoginPage history={history} />)
         cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
           callback.customChallenge()
         }
         cognitoUser.sendCustomChallengeAnswer = (details, callback) => {
-          callback.onFailure({code: 'somecode', message: 'some_message'})
+          callback.onFailure({ code: 'somecode', message: 'some_message' })
         }
         const instance = wrapper.instance()
         instance.showError = mockShowError
@@ -419,7 +466,7 @@ describe('LoginPage.js Tests', () => {
           deviceKey: 'device_key',
           sendCustomChallengeAnswer: sendCustomChallengeAnswer
         }
-        const wrapper = shallow(<LoginPage history={history}/>)
+        const wrapper = shallow(<LoginPage history={history} />)
         wrapper.setState(
           {
             cognitoUser: cognitoUser,
@@ -435,7 +482,7 @@ describe('LoginPage.js Tests', () => {
 
       it('calls sendToRedirectUri', () => {
         const mockSetCognitoToken = jest.fn()
-        const wrapper = shallow(<LoginPage history={history}/>)
+        const wrapper = shallow(<LoginPage history={history} />)
         cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
           callback.customChallenge()
         }
@@ -451,12 +498,12 @@ describe('LoginPage.js Tests', () => {
 
       it('shows validation area', () => {
         const mockShowValidationArea = jest.fn()
-        const wrapper = shallow(<LoginPage history={history}/>)
+        const wrapper = shallow(<LoginPage history={history} />)
         cognitoUser.authenticateUserDefaultAuth = (details, callback) => {
           callback.customChallenge()
         }
         cognitoUser.sendCustomChallengeAnswer = (details, callback) => {
-          callback.customChallenge({maskedEmail: 'someEmail'})
+          callback.customChallenge({ maskedEmail: 'someEmail' })
         }
 
         const instance = wrapper.instance()
@@ -470,13 +517,13 @@ describe('LoginPage.js Tests', () => {
 
     describe('login button', () => {
       it('login button default state', () => {
-        const wrapper = shallow(<LoginPage history={history}/>)
+        const wrapper = shallow(<LoginPage history={history} />)
         expect(wrapper.find(LoginForm).props().disableSignIn).toEqual(false)
       })
 
       it('changes login in button state', () => {
         const mockSetCognitoToken = jest.fn()
-        const wrapper = shallow(<LoginPage history={history}/>)
+        const wrapper = shallow(<LoginPage history={history} />)
         expect(wrapper.find(LoginForm).props().disableSignIn).toEqual(false)
         wrapper.instance().login(event)
         wrapper.setState({ disableSignIn: true })
@@ -486,13 +533,15 @@ describe('LoginPage.js Tests', () => {
   })
 
   describe('changePassword tests', () => {
-    const event = { preventDefault: () => {} }
+    const event = { preventDefault: () => { } }
     it('shows error when passwords do not match', () => {
       const mockShowError = jest.fn()
       const wrapper = shallow(<LoginPage />)
-      wrapper.setState({ mode: MODE.NEW_PASSWORD,
+      wrapper.setState({
+        mode: MODE.NEW_PASSWORD,
         confirmPassword: 'foo',
-        newPassword: 'bar' })
+        newPassword: 'bar'
+      })
 
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -520,7 +569,7 @@ describe('LoginPage.js Tests', () => {
         const mockShowError = jest.fn()
         const wrapper = shallow(<LoginPage />)
         cognitoUser.completeNewPasswordChallenge = (newPassword, details, callback) => {
-          callback.onFailure({message: 'some message'})
+          callback.onFailure({ message: 'some message' })
         }
 
         wrapper.setState(
@@ -539,7 +588,7 @@ describe('LoginPage.js Tests', () => {
       })
 
       it('handles success', () => {
-        const result = {foo: 'bar'}
+        const result = { foo: 'bar' }
         const mockSetCognitoToken = jest.fn()
         const wrapper = shallow(<LoginPage />)
         cognitoUser.completeNewPasswordChallenge = (newPassword, details, callback) => {
