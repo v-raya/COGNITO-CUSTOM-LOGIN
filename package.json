@@ -43,8 +43,8 @@
     "dotenv-webpack": "1.5.7",
     "object-assign": "4.1.0",
     "query-string": "5.1.1",
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
     "react-router-dom": "4.2.2"
   },
   "devDependencies": {
@@ -66,8 +66,8 @@
     "connect-history-api-fallback": "1.3.0",
     "coveralls": "2.13.1",
     "css-loader": "0.28.7",
-    "enzyme": "3.0.0",
-    "enzyme-adapter-react-16": "1.0.0",
+    "enzyme": "3.8.0",
+    "enzyme-adapter-react-16": "1.7.1",
     "eslint": "^5.0.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-loader": "^2.0.0",

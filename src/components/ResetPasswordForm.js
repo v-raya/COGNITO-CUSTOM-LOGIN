@@ -5,7 +5,8 @@ import PasswordInstructions from './PasswordInstructions'
 import { Circle } from '../utils/FaIcons'
 import PasswordInput from './PasswordInput'
 
-const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength, code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, disableChangePasswordBtn, onCancel}) => {
+const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength,
+  code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, disableChangePasswordBtn, onCancel, inputRef}) => {
   return (
     <form>
       <h1>Password Reset</h1>
@@ -19,7 +20,7 @@ const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialC
       <label id='code_label' htmlFor='forgot_password_code'>
         Code
       </label>
-      <PasswordInput id="forgot_password_code" placeholder='Enter Code Here' password={code} onChange={onCodeChange} ariaLabelledBy='code_label'/>
+      <PasswordInput id="forgot_password_code" inputRef={inputRef} placeholder='Enter Code Here' password={code} onChange={onCodeChange} ariaLabelledBy='code_label'/>
       <br/>
       <label id='new_password_label' htmlFor='new_password'>
         Create Password
@@ -58,7 +59,8 @@ ResetPasswordForm.propTypes = {
   validateSpecialCharacter: PropTypes.bool,
   validateUpperCase: PropTypes.bool,
   validateNumber: PropTypes.bool,
-  validateLength: PropTypes.bool
+  validateLength: PropTypes.bool,
+  inputRef: PropTypes.object
 }
 
 export default ResetPasswordForm

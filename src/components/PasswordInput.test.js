@@ -32,13 +32,13 @@ describe('PasswordInput.js Tests', () => {
 
   describe('handleKeyDown', () => {
     const wrapper = shallow(<PasswordInput onChange={mockOnChange} capslock={true}/>)
+    const instance = wrapper.instance()
     const mockModiferCapslockState = jest.fn()
     mockModiferCapslockState.mockReturnValue(true)
     const mockNormalState = jest.fn()
     mockNormalState.mockReturnValue(false)
 
-    it('detects capslock in an event', () => {
-      const instance = wrapper.instance()
+    it('detects capslock-ON when keydown event in input element', () => {
       instance.setState({ capslock: false })
       const myEvent = { key: 'A', getModifierState: mockModiferCapslockState }
       instance.handleKeydown(myEvent)
@@ -46,8 +46,17 @@ describe('PasswordInput.js Tests', () => {
       expect(instance.state.capslock).toBe(true)
     })
 
+    it('detects capslock-ON when click event on input element', () => {
+      const mockEvent = { getModifierState: mockModiferCapslockState }
+      instance.setState({ capslock: false })
+      const mockFunc = jest.spyOn(instance, 'handleKeydown')
+      const input = wrapper.find('input')
+      input.simulate('click', mockEvent)
+      expect(mockFunc).toHaveBeenCalledWith(mockEvent)
+      expect(instance.state.capslock).toBe(true)
+    })
+
     it('detects no capslock when not pressed', () => {
-      const instance = wrapper.instance()
       instance.setState({ capslock: true })
       const myEvent = { key: 'A', getModifierState: mockNormalState }
 

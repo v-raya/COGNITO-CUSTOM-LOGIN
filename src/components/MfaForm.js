@@ -5,7 +5,7 @@ import PasswordInput from './PasswordInput'
 import { Button } from '@cwds/components'
 import {secondstoTime} from './../utils/CommonHelper'
 
-const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, onCancel, errorMsg, countDown}) => {
+const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, onCancel, errorMsg, countDown, inputRef}) => {
   return (
     <form>
       <div id="div-forgot-password-msg">
@@ -25,8 +25,8 @@ const MfaForm = ({maskedEmail, code, onCodeChange, onValidate, disableVerify, on
         placeholder='Enter Code Here'
         password={code}
         onChange={onCodeChange}
-        autoFocus
-        tabIndex='1' />
+        tabIndex='1'
+        inputRef={inputRef} />
       <div className= 'submit-block'>
         <Button
           outline
@@ -61,8 +61,12 @@ MfaForm.propTypes = {
   onValidate: PropTypes.func.isRequired,
   disableVerify: PropTypes.bool,
   onCancel: PropTypes.func,
-  errorMsg: PropTypes.string,
-  countDown: PropTypes.number
+  errorMsg: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
+  countDown: PropTypes.number,
+  inputRef: PropTypes.object
 }
 
 export default MfaForm

@@ -1,10 +1,11 @@
+import 'jsdom-global/register'
 import {validatePassword} from './validatePassword'
 import React from 'react'
 import LoginPage from '../components/LoginPage'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 describe('validatePassword', () => {
-  const wrapper = shallow(<LoginPage/>)
+  const wrapper = mount(<LoginPage/>)
   const instance = wrapper.instance()
   it('validates when password meet all requirements', () => {
     const password = 'Email@123'

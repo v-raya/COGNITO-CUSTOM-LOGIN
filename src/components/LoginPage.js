@@ -6,13 +6,14 @@ import LoginForm from './LoginForm'
 import MfaForm from './MfaForm'
 import NewPasswordRequiredForm from './NewPasswordRequiredForm'
 import * as Auth from '../utils/Auth'
-import {MODE, mfaMessages, updatePasswordMessages, mfaNumber} from '../utils/constants'
+import {MODE, mfaMessages, updatePasswordMessages, mfaTotalAttempts} from '../utils/constants'
 import CodeExpired from './CodeExpired'
 
 class LoginPage extends Component {
   constructor (props, context) {
     super(props, context)
     this.timer = 0
+    this.inputRef = React.createRef()
 
     this.state = {
       mode: MODE.LOGIN,
@@ -46,6 +47,17 @@ class LoginPage extends Component {
     this.showNewPasswordRequiredArea = this.showNewPasswordRequiredArea.bind(this)
     this.onCancel = this.onCancel.bind(this)
     this.startTimer = this.startTimer.bind(this)
+  }
+
+  componentDidMount () {
+    this.inputRef.current.focus()
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    const modesArray = Object.values(MODE)
+    if (prevState.mode !== this.state.mode && modesArray.includes(this.state.mode) && this.state.mode !== MODE.CODE_EXPIRED) {
+      this.inputRef.current.focus()
+    }
   }
 
   onInputChange (event) {
@@ -102,7 +114,7 @@ class LoginPage extends Component {
     document.getElementById('login-form').submit()
   }
 
-  showError (msg, mode = MODE.LOGIN, mfaCount = mfaNumber, cardMessages = {}) {
+  showError (msg, mode = MODE.LOGIN, mfaCount = mfaTotalAttempts, cardMessages = {}) {
     this.setState({
       mode: mode,
       errorMsg: msg,
@@ -116,6 +128,9 @@ class LoginPage extends Component {
       userMsg1: cardMessages.userMsg1,
       userMsg2: cardMessages.userMsg2
     })
+    if (mode !== MODE.CODE_EXPIRED) {
+      this.inputRef.current.focus()
+    }
   }
 
   validate (event) {
@@ -243,7 +258,8 @@ class LoginPage extends Component {
           onValidate={event => this.validate(event)}
           onCancel={this.onCancel}
           errorMsg={this.state.errorMsg}
-          countDown={this.state.countDown} />
+          countDown={this.state.countDown}
+          inputRef={this.inputRef} />
         break
       case MODE.NEW_PASSWORD:
         comp = <NewPasswordRequiredForm
@@ -259,7 +275,9 @@ class LoginPage extends Component {
           onConfirmPasswordChange={this.onInputChange}
           onCancel={this.onCancel}
           sessionTime={this.state.countDown}
-          onSubmit={event => this.changePassword(event)} />
+          onSubmit={event => this.changePassword(event)}
+          inputRef={this.inputRef} />
+
         break
       case MODE.LOGIN:
         comp = <LoginForm
@@ -270,7 +288,8 @@ class LoginPage extends Component {
           email={this.state.email}
           password={this.state.password}
           onEmailChange={this.onInputChange}
-          onPasswordChange={this.onInputChange} />
+          onPasswordChange={this.onInputChange}
+          inputRef={this.inputRef} />
         break
       case MODE.CODE_EXPIRED:
         comp = <CodeExpired

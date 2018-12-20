@@ -6,7 +6,8 @@ import { Circle } from '../utils/FaIcons'
 import PasswordInput from './PasswordInput'
 import { secondstoTime } from './../utils/CommonHelper'
 
-const NewPasswordRequiredForm = ({ errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, sessionTime, validateNumber, validateLength, newPassword, confirmPassword, onNewPasswordChange, onConfirmPasswordChange, onSubmit, onCancel }) => {
+const NewPasswordRequiredForm = ({errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength,
+  newPassword, confirmPassword, onNewPasswordChange, onConfirmPasswordChange, onSubmit, onCancel, sessionTime, inputRef}) => {
   return (
     <form>
       <h1>Please Update Password</h1>
@@ -16,8 +17,7 @@ const NewPasswordRequiredForm = ({ errorMsg, validateLowerCase, validateSpecialC
       <UserMessage errorMessage={errorMsg} />
       <p className='countDown'><b>Your session expires in: {secondstoTime(sessionTime)}</b></p>
       <label id='first_new_password' htmlFor='newPassword'> New Password</label>
-      <PasswordInput id='newPassword' placeholder='Password' password={newPassword} ariaLabeledBy='first_new_password' onChange={onNewPasswordChange} />
-
+      <PasswordInput id='newPassword' inputRef={inputRef} placeholder='Password' password={newPassword} ariaLabeledBy='first_new_password' onChange={onNewPasswordChange}/>
       <PasswordInstructions validateLowerCase={validateLowerCase}
         validateUpperCase={validateUpperCase}
         validateNumber={validateNumber}
@@ -47,7 +47,8 @@ NewPasswordRequiredForm.propTypes = {
   validateUpperCase: PropTypes.bool,
   validateNumber: PropTypes.bool,
   validateLength: PropTypes.bool,
-  sessionTime: PropTypes.number
+  sessionTime: PropTypes.number,
+  inputRef: PropTypes.object
 }
 
 export default NewPasswordRequiredForm

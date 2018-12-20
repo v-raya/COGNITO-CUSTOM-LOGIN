@@ -25,6 +25,8 @@ class ForgotPasswordPage extends Component {
       specialCharacter: false,
       disableChangePasswordBtn: true
     }
+    this.inputRef = React.createRef()
+
     this.showResetArea = this.showResetArea.bind(this)
     this.showError = this.showError.bind(this)
     this.updateEmailState = this.updateEmailState.bind(this)
@@ -36,6 +38,16 @@ class ForgotPasswordPage extends Component {
     this.mask = this.mask.bind(this)
     this.onCancel = this.onCancel.bind(this)
     this.disableChangePasswordBtn = this.disableChangePasswordBtn.bind(this)
+  }
+
+  componentDidMount () {
+    this.inputRef.current.focus()
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.reseting !== this.state.reseting) {
+      this.inputRef.current.focus()
+    }
   }
 
   mask (email) {
@@ -123,6 +135,7 @@ class ForgotPasswordPage extends Component {
       errorMsg: msg,
       disableResetPassword: false
     })
+    this.inputRef.current.focus()
   }
 
   onCancel () {
@@ -181,7 +194,8 @@ class ForgotPasswordPage extends Component {
           onNewPasswordChange={this.updateNewPasswordState}
           onConfirmPasswordChange={this.updateConfirmPasswordState}
           onCancel={this.onCancel}
-          onSubmit={event => this.changePassword(event)}/>)
+          onSubmit={event => this.changePassword(event)}
+          inputRef={this.inputRef}/>)
     } else {
       return (
         <ForgotPasswordForm
@@ -190,7 +204,8 @@ class ForgotPasswordPage extends Component {
           onChange={this.updateEmailState}
           disableResetPassword={this.state.disableResetPassword}
           onCancel={this.onCancel}
-          onSubmit={event => this.onEmailSubmit(event)}/>)
+          onSubmit={event => this.onEmailSubmit(event)}
+          inputRef={this.inputRef}/>)
     }
   }
 }

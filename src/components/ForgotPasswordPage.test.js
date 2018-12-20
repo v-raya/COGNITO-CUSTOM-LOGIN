@@ -1,7 +1,8 @@
 /* eslint no-console: ["error", { allow: ["error"] }] */
 
+import 'jsdom-global/register'
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import ForgotPasswordPage from './ForgotPasswordPage'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import ResetPasswordForm from './ResetPasswordForm'
@@ -9,17 +10,18 @@ import * as Auth from '../utils/Auth'
 
 describe('ForgotPasswordPage.js Tests', () => {
   const event = { preventDefault: () => {} }
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(<ForgotPasswordPage />)
+  })
 
   it('should have reseting=false by default', () => {
-    const wrapper = shallow(<ForgotPasswordPage/>)
-
     expect(wrapper.state().reseting).toEqual(false)
   })
 
   it('should contain <ForgotPasswordForm> by default', () => {
-    const wrapper = shallow(<ForgotPasswordPage/>)
-
     expect(wrapper.find(ForgotPasswordForm).length).toEqual(1)
+    expect(document.activeElement.id).toBe('email')
     expect(wrapper.find(ResetPasswordForm).length).toEqual(0)
   })
 
@@ -27,51 +29,41 @@ describe('ForgotPasswordPage.js Tests', () => {
     const mock = jest.fn()
 
     console.error = mock
-    const wrapper = shallow(<ForgotPasswordPage />)
+
+    expect(document.activeElement.id).toBe('email')
 
     wrapper.setState({ reseting: true, code: 'code', new_password: 'abc', confirm_password: 'def' })
+    expect(document.activeElement.id).toBe('forgot_password_code')
     expect(wrapper.find(ForgotPasswordForm).length).toEqual(0)
     expect(wrapper.find(ResetPasswordForm).length).toEqual(1)
   })
 
   it('masks email correct', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
-
     const masked = wrapper.instance().mask('abcdef@domain.com')
     expect(masked).toEqual('a****f@domain.com')
   })
 
   it('sets code on updateCodeState', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
-
     wrapper.instance().updateCodeState({ target: { value: 'the_code' } })
     expect(wrapper.state().code).toEqual('the_code')
   })
 
   it('sets email on updatEmailState', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
-
     wrapper.instance().updateEmailState({ target: { value: 'email' } })
     expect(wrapper.state().email).toEqual('email')
   })
 
   it('sets new password on updateNewPasswordState', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
-
     wrapper.instance().updateNewPasswordState({ target: { value: 'password' } })
     expect(wrapper.state().new_password).toEqual('password')
   })
 
   it('sets conform password on updateConfirmPasswordState', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
-
     wrapper.instance().updateConfirmPasswordState({ target: { value: 'password' } })
     expect(wrapper.state().confirm_password).toEqual('password')
   })
 
   describe('sets disableChangePasswordBtn state on disableChangePasswordBtn', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
-
     it('sets disableChangePasswordBtn true when no ConfirmPassword', () => {
       wrapper.instance().disableChangePasswordBtn('NewPassword', 'the_code')
       expect(wrapper.state().disableChangePasswordBtn).toEqual(true)
@@ -98,7 +90,7 @@ describe('ForgotPasswordPage.js Tests', () => {
 
     // eslint-disable-next-line no-console
     console.error = mock
-    const wrapper = shallow(<ForgotPasswordPage />)
+
     wrapper.setState({reseting: false, maskedEmail: ''})
     wrapper.instance().setState({email: 'abcdef@domain.com'})
     wrapper.instance().showResetArea()
@@ -107,9 +99,15 @@ describe('ForgotPasswordPage.js Tests', () => {
   })
 
   it('shows error correctly', () => {
-    const wrapper = shallow(<ForgotPasswordPage />)
     wrapper.instance().showError('some_message')
     expect(wrapper.state().errorMsg).toEqual('some_message')
+  })
+
+  it('#showError() calls focus', () => {
+    const focus = jest.spyOn(wrapper.instance().inputRef.current, 'focus')
+    expect(focus).toBeCalledTimes(0)
+    wrapper.instance().showError('some_message')
+    expect(focus).toBeCalledTimes(1)
   })
 
   describe('onEmailSubmit Tests', () => {
@@ -135,13 +133,11 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('sets cognitoUser to state', () => {
-      const wrapper = shallow(<ForgotPasswordPage />)
       wrapper.instance().onEmailSubmit(event)
       expect(wrapper.state().cognitoUser).toEqual(cognitoUser)
     })
 
     it('calls forgotPassword', () => {
-      const wrapper = shallow(<ForgotPasswordPage />)
       wrapper.instance().onEmailSubmit(event)
       expect(mockForgotPassword.mock.calls.length).toEqual(1)
     })
@@ -149,7 +145,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     it('displays email is required if InvalidParameter', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<ForgotPasswordPage />)
       cognitoUser.forgotPassword = (callback) => {
         callback.onFailure({code: 'InvalidParameterException', message: 'some_message'})
       }
@@ -164,7 +159,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     it('displays given errorMessage if not InvalidParameter', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<ForgotPasswordPage />)
       cognitoUser.forgotPassword = (callback) => {
         callback.onFailure({code: 'something', message: 'some_message'})
       }
@@ -179,7 +173,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     it('shows reset area', () => {
       const mockShowResetArea = jest.fn()
 
-      const wrapper = shallow(<ForgotPasswordPage />)
       cognitoUser.forgotPassword = (callback) => {
         callback.inputVerificationCode()
       }
@@ -217,8 +210,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     it('shows error when passwords do not match', () => {
       const mockShowError = jest.fn()
 
-      const wrapper = shallow(<ForgotPasswordPage />)
-
       const instance = wrapper.instance()
       instance.showError = mockShowError
       instance.setState({new_password: 'foobar', confirm_password: 'bazbar'})
@@ -229,8 +220,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     })
 
     it('calls confirm password when passwords match', () => {
-      const wrapper = shallow(<ForgotPasswordPage />)
-
       const instance = wrapper.instance()
       instance.setState({new_password: 'foobar', confirm_password: 'foobar', code: 'some_code', cognitoUser: cognitoUser})
       instance.changePassword(event)
@@ -242,8 +231,6 @@ describe('ForgotPasswordPage.js Tests', () => {
 
     it('shows error on confirm password error', () => {
       const mockShowError = jest.fn()
-
-      const wrapper = shallow(<ForgotPasswordPage />)
 
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -260,8 +247,6 @@ describe('ForgotPasswordPage.js Tests', () => {
 
     it('Shows custom error message, when error code is InvalidParameterException', () => {
       const mockShowError = jest.fn()
-
-      const wrapper = shallow(<ForgotPasswordPage />)
 
       const instance = wrapper.instance()
       instance.showError = mockShowError
@@ -280,8 +265,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     it('pushes to login and show success message on success', () => {
       const mockPush = jest.fn()
 
-      const wrapper = shallow(<ForgotPasswordPage />)
-
       const instance = wrapper.instance()
       const history = {push: mockPush}
       wrapper.setProps({history: history})
@@ -295,6 +278,39 @@ describe('ForgotPasswordPage.js Tests', () => {
       expect(mockPush.mock.calls.length).toEqual(2)
       expect(mockPush.mock.calls[0][0]).toEqual('/login')
       expect(mockPush.mock.calls[1][0]).toEqual({msg: 'Password has been reset successfully. Please use your new password to login.'})
+    })
+  })
+
+  describe('Focus changes', () => {
+    it(' present resetting is false and previous resetting was true', () => {
+      wrapper.setState({ reseting: true })
+      expect(document.activeElement.id).toEqual('forgot_password_code')
+      wrapper.setState({ reseting: false })
+      expect(document.activeElement.id).toEqual('email')
+    })
+
+    it(' present resetting is true and previous resetting was false', () => {
+      wrapper.setState({ reseting: false })
+      expect(document.activeElement.id).toEqual('email')
+      wrapper.setState({ reseting: true })
+      expect(document.activeElement.id).toEqual('forgot_password_code')
+    })
+
+    it('componentDidMount', () => {
+      const focus = jest.spyOn(wrapper.instance().inputRef.current, 'focus')
+      expect(focus).toBeCalledTimes(0)
+      wrapper.instance().componentDidMount()
+      expect(focus).toBeCalledTimes(1)
+    })
+    it('componentDidUpdate', () => {
+      const prevState = {
+        reseting: true
+      }
+      const prevProps = { history: { location: { msg: '' } } }
+      const focus = jest.spyOn(wrapper.instance().inputRef.current, 'focus')
+      expect(focus).toBeCalledTimes(0)
+      wrapper.instance().componentDidUpdate(prevProps, prevState)
+      expect(focus).toBeCalledTimes(1)
     })
   })
 })

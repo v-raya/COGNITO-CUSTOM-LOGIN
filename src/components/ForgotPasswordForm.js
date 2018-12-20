@@ -2,14 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UserMessage from './UserMessage'
 
-const ForgotPasswordForm = ({errorMsg, email, onChange, onSubmit, disableResetPassword, onCancel}) => {
+const ForgotPasswordForm = ({errorMsg, email, onChange, onSubmit, disableResetPassword, onCancel, inputRef}) => {
   return (
     <form>
       <h1>Password Reset</h1>
       <UserMessage errorMessage={errorMsg}/>
       <br/>
       <label htmlFor='email' className='label-customizable'>Enter your login email below and we will send a message to reset your password</label>
-      <input name="emal" id="email" className="form-control inputField-customizable" type="text"
+      <input name="emal" ref={inputRef} id="email" className="form-control inputField-customizable" type="text"
         placeholder="Email" value={email} onChange={onChange} aria-labelledby='email_label' tabIndex="1"/>
       <div className= 'submit-block'>
         <button
@@ -39,7 +39,8 @@ ForgotPasswordForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   errorMsg: PropTypes.string,
   disableResetPassword: PropTypes.bool,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  inputRef: PropTypes.object
 }
 
 export default ForgotPasswordForm

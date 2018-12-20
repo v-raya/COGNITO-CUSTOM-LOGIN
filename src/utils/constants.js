@@ -17,4 +17,4 @@ export const updatePasswordMessages = {
   userMsg2: ''
 }
 
-export const mfaNumber = 3
+export const mfaTotalAttempts = 3

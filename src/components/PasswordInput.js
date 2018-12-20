@@ -8,17 +8,14 @@ class PasswordInput extends React.Component {
     this.state = { capslock: false }
 
     this.handleKeydown = this.handleKeydown.bind(this)
-
-    this.setPasswordInputRef = element => {
-      if (element) element.addEventListener('keydown', this.handleKeydown)
-    }
   }
 
   render () {
-    const { password, onChange, ariaLabelledBy, placeholder, tabIndex } = this.props
+    const { password, onChange, ariaLabelledBy, placeholder, tabIndex, inputRef } = this.props
     return (<React.Fragment>
-      <input id={this.props.id} ref={this.setPasswordInputRef} name='password' type='password' className='form-control inputField-customizable'
-        placeholder={placeholder} value={password} onChange={onChange} aria-labelledby={ariaLabelledBy} tabIndex={tabIndex} />
+      <input id={this.props.id} ref={inputRef} name='password' type='password' className='form-control inputField-customizable'
+        placeholder={placeholder} value={password} onChange={onChange} onClick={(event) => this.handleKeydown(event)}
+        onKeyDown={(event) => this.handleKeydown(event)} aria-labelledby={ariaLabelledBy} tabIndex={tabIndex} />
       {this.state.capslock && <Alert className='errorMessage-customizable' color='danger'>Caps Lock is on</Alert>}
     </React.Fragment>
     )
@@ -38,6 +35,7 @@ PasswordInput.propTypes = {
   onChange: PropTypes.func.isRequired,
   ariaLabelledBy: PropTypes.string,
   placeholder: PropTypes.string,
-  tabIndex: PropTypes.string
+  tabIndex: PropTypes.string,
+  inputRef: PropTypes.object
 }
 export default PasswordInput
