@@ -6,28 +6,9 @@ import LoginForm from './LoginForm'
 import MfaForm from './MfaForm'
 import NewPasswordRequiredForm from './NewPasswordRequiredForm'
 import * as Auth from '../utils/Auth'
+import {MODE, mfaMessages, updatePasswordMessages, mfaNumber} from '../utils/constants'
 import CodeExpired from './CodeExpired'
 
-const MODE = {
-  LOGIN: 1,
-  VALIDATING: 2,
-  NEW_PASSWORD: 3,
-  CODE_EXPIRED: 4
-}
-
-const mfaMessages = {
-  errorMsg: 'Your Code has expired.',
-  userMsg1: 'Please return to the login screen and re-enter your login information.',
-  userMsg2: 'A new code will be sent to your email.'
-}
-
-const updatePasswordMessages = {
-  errorMsg: 'Your session has expired.',
-  userMsg1: 'Please return to the login screen to start the Password Update process.',
-  userMsg2: ''
-}
-
-const mfaNumber = 3
 class LoginPage extends Component {
   constructor (props, context) {
     super(props, context)
@@ -88,7 +69,7 @@ class LoginPage extends Component {
     const mfaCount = 3
     const duration = this.state.countDown
     const showError = this.showError
-    if (duration > 0) {
+    if (duration > 1) {
       this.setState({
         countDown: duration - 1
       })

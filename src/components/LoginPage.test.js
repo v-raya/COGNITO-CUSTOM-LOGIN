@@ -120,8 +120,8 @@ describe('LoginPage.js Tests', () => {
     expect(wrapper.state().countDown).toEqual(123)
   })
 
-  it('sets up correctly after startTimer is called & Code Timeout, when countDown = 0', () => {
-    const countDown = 0
+  it('sets up correctly after startTimer is called & Code Timeout, when countDown comes to 1 second', () => {
+    const countDown = 1
     const wrapper = shallow(<LoginPage />)
     wrapper.setState({ mode: MODE.VALIDATING, maskedEmail: 'a@test.com', countDown: countDown })
     wrapper.instance().startTimer()
