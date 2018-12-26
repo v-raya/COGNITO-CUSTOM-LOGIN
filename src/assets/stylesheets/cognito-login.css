@@ -243,10 +243,15 @@ li {
     color: #BB3709;
 }
 
+.mfa-instructions {
+    display: flex;
+    font-size: large;
+}
+
 .userMsg1, .userMsg2 {
     display: flex;
-    justify-content: center;
     font-size: large;
+    justify-content: center;
 }
 
 .cancel-button, .validate-button {

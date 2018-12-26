@@ -6,7 +6,7 @@ import LoginForm from './LoginForm'
 import MfaForm from './MfaForm'
 import NewPasswordRequiredForm from './NewPasswordRequiredForm'
 import * as Auth from '../utils/Auth'
-import {MODE, mfaMessages, updatePasswordMessages, mfaTotalAttempts} from '../utils/constants'
+import { MODE, mfaMessages, updatePasswordMessages, mfaTotalAttempts } from '../utils/constants'
 import CodeExpired from './CodeExpired'
 
 class LoginPage extends Component {
