@@ -15,13 +15,13 @@ describe('ResetPasswordForm.js Tests', () => {
 
     shallow(<ResetPasswordForm/>)
 
-    expect(mock).toHaveBeenCalledTimes(9)
+    expect(mock).toHaveBeenCalledTimes(6)
     const concat = [].concat(...mock.mock.calls)
 
     expect(concat.some((element) => { return element.includes('`email` is marked as required') })).toBe(true)
-    expect(concat.some((element) => { return element.includes('`code` is marked as required') })).toBe(true)
-    expect(concat.some((element) => { return element.includes('`newPassword` is marked as required') })).toBe(true)
-    expect(concat.some((element) => { return element.includes('`confirmPassword` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`code` is marked as required') })).toBe(false)
+    expect(concat.some((element) => { return element.includes('`newPassword` is marked as required') })).toBe(false)
+    expect(concat.some((element) => { return element.includes('`confirmPassword` is marked as required') })).toBe(false)
     expect(concat.some((element) => { return element.includes('`onCodeChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onNewPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onConfirmPasswordChange` is marked as required') })).toBe(true)
@@ -178,6 +178,38 @@ describe('ResetPasswordForm.js Tests', () => {
       const button = wrapper.find('button')
       expect(button).toHaveLength(2)
       expect(button.at(0).text()).toEqual('Change Password')
+    })
+
+    describe('check if Change Password button is disabled or not', () => {
+      it('should enable when code, newPassword and confirmPassword has values', () => {
+        const wrapper = shallow(<ResetPasswordForm code="the_code" newPassword="new_password" confirmPassword="confirm_password"/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(false)
+      })
+
+      it('should disable when code is empty', () => {
+        const wrapper = shallow(<ResetPasswordForm code="" newPassword="new_password" confirmPassword="confirm_password"/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when newPassword is empty', () => {
+        const wrapper = shallow(<ResetPasswordForm code="the_code" newPassword="" confirmPassword="confirm_password"/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when confirmPassword is empty', () => {
+        const wrapper = shallow(<ResetPasswordForm code="the_code" newPassword="new_password" confirmPassword=""/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when confirmPassword, newPassword and code are empty', () => {
+        const wrapper = shallow(<ResetPasswordForm code="" newPassword="" confirmPassword=""/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when code is null', () => {
+        const wrapper = shallow(<ResetPasswordForm code={null} newPassword="" confirmPassword=""/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
     })
 
     it('calls correct callback onClick for change password', () => {

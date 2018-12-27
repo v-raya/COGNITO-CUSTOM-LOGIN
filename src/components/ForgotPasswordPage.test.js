@@ -63,28 +63,6 @@ describe('ForgotPasswordPage.js Tests', () => {
     expect(wrapper.state().confirm_password).toEqual('password')
   })
 
-  describe('sets disableChangePasswordBtn state on disableChangePasswordBtn', () => {
-    it('sets disableChangePasswordBtn true when no ConfirmPassword', () => {
-      wrapper.instance().disableChangePasswordBtn('NewPassword', 'the_code')
-      expect(wrapper.state().disableChangePasswordBtn).toEqual(true)
-    })
-
-    it('sets disableChangePasswordBtn true when no NewPassword', () => {
-      wrapper.instance().disableChangePasswordBtn('ConfirmPassword', 'the_code')
-      expect(wrapper.state().disableChangePasswordBtn).toEqual(true)
-    })
-
-    it('sets disableChangePasswordBtn true when no code', () => {
-      wrapper.instance().disableChangePasswordBtn('NewPassword', 'ConfirmPassword')
-      expect(wrapper.state().disableChangePasswordBtn).toEqual(true)
-    })
-
-    it('sets disableChangePasswordBtn false when given NewPassword, ConfirmPassword , code', () => {
-      wrapper.instance().disableChangePasswordBtn('NewPassword', 'ConfirmPassword', 'the_code')
-      expect(wrapper.state().disableChangePasswordBtn).toEqual(false)
-    })
-  })
-
   it('sets up correctly when showing reset area', () => {
     const mock = jest.fn()
 

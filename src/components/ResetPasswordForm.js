@@ -6,7 +6,7 @@ import { Circle } from '../utils/FaIcons'
 import PasswordInput from './PasswordInput'
 
 const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialCharacter, validateUpperCase, validateNumber, validateLength,
-  code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, disableChangePasswordBtn, onCancel, inputRef}) => {
+  code, newPassword, confirmPassword, onCodeChange, onNewPasswordChange, onConfirmPasswordChange, onSubmit, onCancel, inputRef}) => {
   return (
     <form>
       <h1>Password Reset</h1>
@@ -37,7 +37,7 @@ const ResetPasswordForm = ({email, errorMsg, validateLowerCase, validateSpecialC
       </label>
       <PasswordInput id='confirm_password' placeholder='Password' password={confirmPassword} onChange={onConfirmPasswordChange} ariaLabelledBy='confirm_password_label'/>
 
-      <button disabled={disableChangePasswordBtn} id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
+      <button disabled={!(confirmPassword && newPassword && code)} id="change_password_button" className="btn btn-primary submitButton-customizable" type="submit" onClick={onSubmit}>Change Password</button>
       <button id="cancel_button" className="btn btn-link cancelButton-customizable" type="submit" onClick={onCancel}>{Circle()} Cancel - Return to Login</button>
     </form>
   )
@@ -54,13 +54,18 @@ ResetPasswordForm.propTypes = {
   onConfirmPasswordChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
-  disableChangePasswordBtn: PropTypes.bool,
   validateLowerCase: PropTypes.bool,
   validateSpecialCharacter: PropTypes.bool,
   validateUpperCase: PropTypes.bool,
   validateNumber: PropTypes.bool,
   validateLength: PropTypes.bool,
   inputRef: PropTypes.object
+}
+
+ResetPasswordForm.defaultProps = {
+  code: '',
+  newPassword: '',
+  confirmPassword: ''
 }
 
 export default ResetPasswordForm

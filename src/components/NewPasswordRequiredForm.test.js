@@ -167,4 +167,31 @@ describe('NewPasswordRequiredForm.js Tests', () => {
 
     expect(button.at(1).props().onClick).toEqual(onCancel)
   })
+
+  describe('check if Change Password button is disabled or not', () => {
+    it('should enable when newPassword and changePassword has values', () => {
+      const wrapper = shallow(<NewPasswordRequiredForm newPassword="New Password" confirmPassword="confirm_password"/>)
+      expect(wrapper.find('button').at(0).props().disabled).toEqual(false)
+    })
+
+    it('should disable when newPassword is empty', () => {
+      const wrapper = shallow(<NewPasswordRequiredForm newPassword="" confirmPassword="confirm_password"/>)
+      expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+    })
+
+    it('should disable when confirmPassword is empty', () => {
+      const wrapper = shallow(<NewPasswordRequiredForm newPassword="New Password" confirmPassword=""/>)
+      expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+    })
+
+    it('should disable when confirmPassword and newPassword are empty', () => {
+      const wrapper = shallow(<NewPasswordRequiredForm newPassword="" confirmPassword=""/>)
+      expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+    })
+
+    it('should disable when confirmPassword is null', () => {
+      const wrapper = shallow(<NewPasswordRequiredForm newPassword={null} confirmPassword=""/>)
+      expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+    })
+  })
 })

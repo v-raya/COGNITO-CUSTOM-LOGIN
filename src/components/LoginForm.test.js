@@ -11,20 +11,20 @@ describe('LoginForm.js Tests', () => {
     // eslint-disable-next-line no-console
     console.error = mock
 
-    shallow(<LoginForm/>)
+    shallow(<LoginForm />)
 
-    expect(mock).toHaveBeenCalledTimes(6)
+    expect(mock).toHaveBeenCalledTimes(4)
     const concat = [].concat(...mock.mock.calls)
     expect(concat.some((element) => { return element.includes('`onSubmit` is marked as required') })).toBe(true)
-    expect(concat.some((element) => { return element.includes('`email` is marked as required') })).toBe(true)
-    expect(concat.some((element) => { return element.includes('`password` is marked as required') })).toBe(true)
+    expect(concat.some((element) => { return element.includes('`email` is marked as required') })).toBe(false)
+    expect(concat.some((element) => { return element.includes('`password` is marked as required') })).toBe(false)
     expect(concat.some((element) => { return element.includes('`onEmailChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onPasswordChange` is marked as required') })).toBe(true)
     expect(concat.some((element) => { return element.includes('`onChange` is marked as required') })).toBe(true)
   })
 
   it('should display `Log In` at top', () => {
-    const wrapper = shallow(<LoginForm/>)
+    const wrapper = shallow(<LoginForm />)
 
     const h1 = wrapper.find('h1')
 
@@ -186,10 +186,34 @@ describe('LoginForm.js Tests', () => {
       expect(button).toHaveLength(1)
       expect(button.props().onClick).toEqual(mockToVerify)
     })
-    it('check if submit button is disabled or not', () => {
-      const button = wrapper.find('button')
-      expect(button.props().disabled).toEqual(disableSignIn)
+
+    describe('check if Submit button is disabled or not', () => {
+      it('should enable when email and password has values', () => {
+        const wrapper = shallow(<LoginForm email="a@test.com" password="password" />)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(false)
+      })
+
+      it('should disable when email is empty', () => {
+        const wrapper = shallow(<LoginForm email="" password="password"/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when password is empty', () => {
+        const wrapper = shallow(<LoginForm email="b@test.com" password=""/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when password and email are empty', () => {
+        const wrapper = shallow(<LoginForm email="" password=""/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
+
+      it('should disable when email is null', () => {
+        const wrapper = shallow(<LoginForm email={null} password=""/>)
+        expect(wrapper.find('button').at(0).props().disabled).toEqual(true)
+      })
     })
+
     it('check if submit button text is changed', () => {
       const wrapper = shallow(<LoginForm
         email="a@test.com"

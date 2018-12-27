@@ -16,7 +16,7 @@ const LoginForm = ({onSubmit, errorMsg, successMessage, email, password,
       <label className='label-customizable' htmlFor='password'>Password</label>
       <PasswordInput id='password' placeholder='Password' password={password} onChange={onPasswordChange}/>
       <a className='redirect-customizable' href='/forgotPassword'>Forgot your password?</a>
-      <button className="btn btn-primary submitButton-customizable" id="submit" type="submit" onClick={onSubmit} disabled={disableSignIn}>
+      <button className="btn btn-primary submitButton-customizable" id="submit" type="submit" onClick={onSubmit} disabled={!(email && password)}>
         {disableSignIn ? 'Loading....' : 'Sign In'}
       </button>
       <br/>
@@ -36,6 +36,11 @@ LoginForm.propTypes = {
   onPasswordChange: PropTypes.func.isRequired,
   disableSignIn: PropTypes.bool,
   inputRef: PropTypes.object
+}
+
+LoginForm.defaultProps = {
+  email: '',
+  password: ''
 }
 
 export default LoginForm
