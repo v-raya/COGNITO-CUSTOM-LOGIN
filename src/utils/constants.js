@@ -13,8 +13,8 @@ export const mfaMessages = {
 
 export const updatePasswordMessages = {
   errorMsg: 'Your session has expired.',
-  userMsg1: 'Please return to the login screen to start the Password Update process.',
-  userMsg2: ''
+  userMsg1: 'Please return to the login screen to re-start',
+  userMsg2: 'Password Update process.'
 }
 
 export const mfaTotalAttempts = 3

@@ -9,7 +9,7 @@ import MfaForm from './MfaForm'
 import NewPasswordRequiredForm from './NewPasswordRequiredForm'
 import * as Auth from '../utils/Auth'
 import CodeExpired from './CodeExpired'
-import {MODE, mfaMessages, updatePasswordMessages, mfaTotalAttempts} from '../utils/constants'
+import { MODE, mfaMessages, updatePasswordMessages, mfaTotalAttempts } from '../utils/constants'
 
 describe('LoginPage.js Tests', () => {
   let wrapper
@@ -118,8 +118,8 @@ describe('LoginPage.js Tests', () => {
     expect(wrapper.state().email).toEqual('a@test.com')
     expect(wrapper.state().password).toEqual('')
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
-    expect(wrapper.state().userMsg1).toEqual('Please return to the login screen to start the Password Update process.')
-    expect(wrapper.state().userMsg2).toEqual('')
+    expect(wrapper.state().userMsg1).toEqual('Please return to the login screen to re-start')
+    expect(wrapper.state().userMsg2).toEqual('Password Update process.')
   })
   it('#showError() is called with code expired messages', () => {
     wrapper.instance().showError(mfaMessages.errorMsg, MODE.CODE_EXPIRED, mfaTotalAttempts, mfaMessages)
