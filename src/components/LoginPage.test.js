@@ -79,12 +79,14 @@ describe('LoginPage.js Tests', () => {
   })
 
   it('sets up correctly when showing validation area', () => {
-    const countDown = 178
-    wrapper.setState({ mode: MODE.LOGIN, maskedEmail: '', countDown: countDown })
+    const countDown = 122
+    wrapper.setState({ mode: MODE.LOGIN, maskedEmail: '', countDown: countDown, MfaAttemptsRemaining: 1 })
     wrapper.instance().showValidationArea('a@test.com')
     expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
     expect(wrapper.state().maskedEmail).toEqual('a@test.com')
     expect(wrapper.state().errorMsg).toEqual('')
+    expect(wrapper.state().countDown).toEqual(178)
+    expect(wrapper.state().MfaAttemptsRemaining).toEqual(3)
     const mockStartTimer = wrapper.instance().startTimer
     expect(wrapper.instance().timer._repeat).toEqual(1000)
     expect(wrapper.instance().timer._onTimeout).toEqual(mockStartTimer)
@@ -168,7 +170,7 @@ describe('LoginPage.js Tests', () => {
       userMsg1: '',
       userMsg2: ''
     }
-    wrapper.instance().showError('msg', MODE.LOGIN, mfaTotalAttempts, cardMessages)
+    wrapper.instance().showError('msg', MODE.LOGIN, mfaTotalAttempts, cardMessages, 'somePassword')
     expect(wrapper.state()).toEqual({
       MfaAttemptsRemaining: mfaTotalAttempts,
       code: '',
@@ -176,7 +178,7 @@ describe('LoginPage.js Tests', () => {
       maskedEmail: 'somevalue',
       errorMsg: 'msg',
       email: 'a@a.com',
-      password: '',
+      password: 'somePassword',
       cognitoJson: '{}',
       newPassword: '',
       confirmPassword: '',

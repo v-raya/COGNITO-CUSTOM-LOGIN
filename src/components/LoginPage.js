@@ -71,7 +71,9 @@ class LoginPage extends Component {
     this.setState({
       mode: MODE.VALIDATING,
       maskedEmail: maskedEmail,
-      errorMsg: ''
+      countDown: 178,
+      errorMsg: '',
+      MfaAttemptsRemaining: 3
     })
     const intervalTime = 1000
     this.timer = setInterval(this.startTimer, intervalTime)
@@ -114,11 +116,11 @@ class LoginPage extends Component {
     document.getElementById('login-form').submit()
   }
 
-  showError (msg, mode = MODE.LOGIN, mfaCount = mfaTotalAttempts, cardMessages = {}) {
+  showError (msg, mode = MODE.LOGIN, mfaCount = mfaTotalAttempts, cardMessages = {}, password = '') {
     this.setState({
       mode: mode,
       errorMsg: msg,
-      password: '',
+      password: password,
       newPassword: '',
       confirmPassword: '',
       code: '',
@@ -140,7 +142,7 @@ class LoginPage extends Component {
     const showError = this.showError
     const attemptsRemaining = this.state.MfaAttemptsRemaining
     const setCognitoToken = this.setCognitoToken
-    const magicNum = 3
+    const mfaCount = 3
     this.setState({
       disableVerify: true
     })
@@ -153,10 +155,10 @@ class LoginPage extends Component {
         const count = attemptsRemaining - 1
         const errorMessage = customErrorMessage(count)
         if (count === 0) {
-          showError('', MODE.LOGIN, magicNum)
+          showError('', MODE.LOGIN, mfaCount)
           clearInterval(this.timer)
         } else {
-          showError(errorMessage, MODE.VALIDATING, count)
+          showError(errorMessage, MODE.VALIDATING, count, {}, this.state.password)
         }
       }
     })
@@ -198,6 +200,7 @@ class LoginPage extends Component {
             showError(err.message)
           },
           customChallenge: challengeParameters => {
+            clearInterval(this.timer)
             showValidationArea(challengeParameters.maskedEmail)
           }
         })
@@ -259,7 +262,8 @@ class LoginPage extends Component {
           onCancel={this.onCancel}
           errorMsg={this.state.errorMsg}
           countDown={this.state.countDown}
-          inputRef={this.inputRef} />
+          inputRef={this.inputRef}
+          onResend={event => this.login(event)} />
         break
       case MODE.NEW_PASSWORD:
         comp = <NewPasswordRequiredForm

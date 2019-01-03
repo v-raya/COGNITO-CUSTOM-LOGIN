@@ -5,7 +5,7 @@ import PasswordInput from './PasswordInput'
 import { Button } from '@cwds/components'
 import { secondstoTime } from './../utils/CommonHelper'
 
-const MfaForm = ({ maskedEmail, code, onCodeChange, onValidate, disableVerify, onCancel, errorMsg, countDown, inputRef }) => {
+const MfaForm = ({ maskedEmail, code, onCodeChange, onValidate, disableVerify, onCancel, errorMsg, countDown, inputRef, onResend }) => {
   return (
     <form>
       <div id="div-forgot-password-msg">
@@ -28,27 +28,41 @@ const MfaForm = ({ maskedEmail, code, onCodeChange, onValidate, disableVerify, o
         tabIndex='1'
         inputRef={inputRef} />
       <div className='submit-block'>
-        <Button
-          outline
-          color='primary'
-          size='lg'
-          type="button"
-          id="cancelButton"
-          className="cancel-button btn btn-primary"
-          onClick={onCancel}>
+        <span><b>Not Working?</b>
+          <div>
+            <Button
+              id="resendButton"
+              className='resend-button'
+              color="link"
+              size='lg'
+              onClick={onResend}>
+             Resend
+            </Button>
+          </div>
+        </span>
+        <span>
+          <Button
+            outline
+            color='primary'
+            size='lg'
+            type="button"
+            id="cancelButton"
+            className="cancel-button btn btn-primary"
+            onClick={onCancel}>
           Cancel
-        </Button>
-        <Button
-          color='primary'
-          size='lg'
-          type='submit'
-          id="validateButton"
-          className="validate-button btn btn-primary"
-          disabled={!code || disableVerify}
-          onClick={onValidate}
-          tabIndex='2'>
-          {disableVerify ? 'Loading....' : 'Verify'}
-        </Button>
+          </Button>
+          <Button
+            color='primary'
+            size='lg'
+            type='submit'
+            id="validateButton"
+            className="validate-button btn btn-primary"
+            disabled={!code || disableVerify}
+            onClick={onValidate}
+            tabIndex='2'>
+            {disableVerify ? 'Loading....' : 'Verify'}
+          </Button>
+        </span>
       </div>
     </form>
   )
@@ -66,7 +80,8 @@ MfaForm.propTypes = {
     PropTypes.object
   ]),
   countDown: PropTypes.number,
-  inputRef: PropTypes.object
+  inputRef: PropTypes.object,
+  onResend: PropTypes.func
 }
 
 export default MfaForm
