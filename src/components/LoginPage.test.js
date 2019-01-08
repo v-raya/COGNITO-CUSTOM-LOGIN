@@ -575,13 +575,24 @@ describe('LoginPage.js Tests', () => {
   })
 
   describe('Cancel button', () => {
+    const newPasswordValue = '123'
+    const confirmPasswordValue = '456'
+
     it('calls onCancel', () => {
-      wrapper.setState({ mode: MODE.VALIDATING, disableSignIn: true, errorMsg: 'Some-error' })
+      wrapper.setState({
+        mode: MODE.VALIDATING,
+        disableSignIn: true,
+        errorMsg: 'Some-error',
+        newPassword: newPasswordValue,
+        confirmPassword: confirmPasswordValue
+      })
 
       expect(wrapper.state().mode).toEqual(MODE.VALIDATING)
       expect(document.activeElement.id).toEqual('code')
       expect(wrapper.find(MfaForm).length).toEqual(1)
       expect(wrapper.state().errorMsg).toEqual('Some-error')
+      expect(wrapper.state().newPassword).toEqual(newPasswordValue)
+      expect(wrapper.state().confirmPassword).toEqual(confirmPasswordValue)
 
       wrapper.instance().onCancel()
 
@@ -592,6 +603,8 @@ describe('LoginPage.js Tests', () => {
       expect(wrapper.state().errorMsg).toEqual('')
       expect(wrapper.state().MfaAttemptsRemaining).toEqual(mfaTotalAttempts)
       expect(wrapper.state().countDown).toEqual(178)
+      expect(wrapper.state().newPassword).toEqual('')
+      expect(wrapper.state().confirmPassword).toEqual('')
       expect(wrapper.find(LoginForm).length).toEqual(1)
     })
   })
