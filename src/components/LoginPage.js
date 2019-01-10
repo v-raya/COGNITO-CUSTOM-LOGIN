@@ -165,6 +165,7 @@ class LoginPage extends Component {
   }
 
   login (event) {
+    clearInterval(this.timer)
     event.preventDefault()
     const showValidationArea = this.showValidationArea
     const showNewPasswordRequiredArea = this.showNewPasswordRequiredArea
@@ -200,7 +201,6 @@ class LoginPage extends Component {
             showError(err.message)
           },
           customChallenge: challengeParameters => {
-            clearInterval(this.timer)
             showValidationArea(challengeParameters.maskedEmail)
           }
         })

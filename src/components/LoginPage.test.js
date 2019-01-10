@@ -12,6 +12,7 @@ import CodeExpired from './CodeExpired'
 import { MODE, mfaMessages, updatePasswordMessages, mfaTotalAttempts } from '../utils/constants'
 
 describe('LoginPage.js Tests', () => {
+  jest.useFakeTimers()
   let wrapper
   beforeEach(() => {
     wrapper = mount(<LoginPage />)
@@ -88,8 +89,7 @@ describe('LoginPage.js Tests', () => {
     expect(wrapper.state().countDown).toEqual(178)
     expect(wrapper.state().MfaAttemptsRemaining).toEqual(3)
     const mockStartTimer = wrapper.instance().startTimer
-    expect(wrapper.instance().timer._repeat).toEqual(1000)
-    expect(wrapper.instance().timer._onTimeout).toEqual(mockStartTimer)
+    expect(setInterval).toHaveBeenLastCalledWith(mockStartTimer, 1000)
   })
 
   it('sets up correctly after startTimer is called, when countDown is greater than 0', () => {
@@ -318,6 +318,14 @@ describe('LoginPage.js Tests', () => {
 
       wrapper.instance().login(event)
       expect(wrapper.state().cognitoUser).toEqual(cognitoUser)
+    })
+
+    it('calls clearInterval when login', () => {
+      wrapper = mount(<LoginPage history={history} />)
+      wrapper.instance().timer = 75
+      wrapper.instance().login(event)
+      const timer = wrapper.instance().timer
+      expect(clearInterval).toHaveBeenLastCalledWith(timer)
     })
 
     it('sets authenticationFlowType to CUSTOM_AUTH', () => {
